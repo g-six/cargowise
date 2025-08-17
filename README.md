@@ -1,6 +1,6 @@
-# Catalyst Demo
+# Cargowise Demo
 
-To run the Catalyst demo, first install the npm dependencies:
+To run the Cargowise demo, first install the npm dependencies:
 
 ```bash
 npm install
