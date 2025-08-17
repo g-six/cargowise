@@ -1,12 +1,12 @@
 export async function getOrder(id: string) {
-  return (await getOrders()).find((order) => order.id.toString() === id)!
+  return (await getJobOrders()).find((order) => order.id.toString() === id)!
 }
 
 export async function getRecentOrders() {
-  return (await getOrders()).slice(0, 10)
+  return (await getJobOrders()).slice(0, 10)
 }
 
-export async function getOrders() {
+export async function getJobOrders() {
   return [
     {
       id: 3000,
@@ -718,7 +718,7 @@ export async function getEvent(id: string) {
 }
 
 export async function getEventOrders(id: string) {
-  return (await getOrders()).filter((order) => order.event.id.toString() === id)
+  return (await getJobOrders()).filter((order) => order.event.id.toString() === id)
 }
 
 export async function getEvents() {

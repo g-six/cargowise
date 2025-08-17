@@ -111,7 +111,7 @@ export function ApplicationLayout({
                   <Avatar slot="icon" src="/teams/catalyst.svg" />
                   <DropdownLabel>Cargowise</DropdownLabel>
                 </DropdownItem>
-                <DropdownItem href="#">
+                {/* <DropdownItem href="#">
                   <Avatar slot="icon" initials="BE" className="bg-purple-500 text-white" />
                   <DropdownLabel>Big Events</DropdownLabel>
                 </DropdownItem>
@@ -119,7 +119,7 @@ export function ApplicationLayout({
                 <DropdownItem href="#">
                   <PlusIcon />
                   <DropdownLabel>New team&hellip;</DropdownLabel>
-                </DropdownItem>
+                </DropdownItem> */}
               </DropdownMenu>
             </Dropdown>
           </SidebarHeader>
@@ -134,7 +134,7 @@ export function ApplicationLayout({
                 <Square2StackIcon />
                 <SidebarLabel>Events</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
+              <SidebarItem href="/jobs" current={pathname.startsWith('/jobs')}>
                 <TicketIcon />
                 <SidebarLabel>Orders</SidebarLabel>
               </SidebarItem>

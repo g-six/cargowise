@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getRecentOrders } from '@/data'
 
 export default async function Home() {
-  let orders = await getRecentOrders()
+  let jobs = await getRecentOrders()
 
   return (
     <>
@@ -28,7 +28,7 @@ export default async function Home() {
         <Stat title="Tickets sold" value="5,888" change="+4.5%" />
         <Stat title="Pageviews" value="823,067" change="+21.2%" />
       </div>
-      <Subheading className="mt-14">Recent orders</Subheading>
+      <Subheading className="mt-14">Recent jobs</Subheading>
       <Table className="mt-4 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>
           <TableRow>
@@ -40,7 +40,7 @@ export default async function Home() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
+          {jobs.map((order) => (
             <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
               <TableCell>{order.id}</TableCell>
               <TableCell className="text-zinc-500">{order.date}</TableCell>

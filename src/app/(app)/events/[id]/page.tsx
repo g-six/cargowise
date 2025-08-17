@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function Event({ params }: { params: Promise<{ id: string }> }) {
   let { id } = await params
   let event = await getEvent(id)
-  let orders = await getEventOrders(id)
+  let jobs = await getEventOrders(id)
 
   if (!event) {
     notFound()
@@ -64,7 +64,7 @@ export default async function Event({ params }: { params: Promise<{ id: string }
         />
         <Stat title="Pageviews" value={event.pageViews} change={event.pageViewsChange} />
       </div>
-      <Subheading className="mt-12">Recent orders</Subheading>
+      <Subheading className="mt-12">Recent jobs</Subheading>
       <Table className="mt-4 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>
           <TableRow>
@@ -75,7 +75,7 @@ export default async function Event({ params }: { params: Promise<{ id: string }
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
+          {jobs.map((order) => (
             <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
               <TableCell>{order.id}</TableCell>
               <TableCell className="text-zinc-500">{order.date}</TableCell>
