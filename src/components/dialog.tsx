@@ -1,7 +1,11 @@
+'use client'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import type React from 'react'
 import { Text } from './text'
+import { Button } from './button'
+import { ForwardRefExoticComponent, ReactNode } from 'react'
+import { UserPlusIcon } from '@heroicons/react/16/solid'
 
 const sizes = {
   xs: 'sm:max-w-xs',
@@ -83,4 +87,12 @@ export function DialogActions({ className, ...props }: React.ComponentPropsWitho
       )}
     />
   )
+}
+
+
+export function DialogButton(components: { label?: string; icon: ReactNode , children?: any; onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
+    return <>
+        <Button type='button' onClick={components.onClick}>{components.icon}{components.label || ''}</Button>
+        {components.children}
+    </>
 }
