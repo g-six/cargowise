@@ -7,53 +7,7 @@ import { SidebarItem } from "./sidebar";
 import { AccountDropdownMenu } from "@/app/(app)/application-layout";
 import { useEffect, useState } from "react";
 
-export default function SessionComponent() {
-    const [data, setData] = useState<Record<string, any>>({});
-    async function getUser(jwt: string = localStorage.getItem('access_token') || '') {
-        const response = await fetch('/api/auth', {
-            headers: {
-                Authorization: `Bearer ${jwt}`,
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch user');
-        }
-        return response.json();
-    }
-    useEffect(() => {
-        if (location && location?.hash) {
-            new URLSearchParams(location.hash.slice(1)).forEach((value, key) => {
-                localStorage.setItem(key, value);
-            });
-            
-            const element = document.getElementById(location.hash.slice(1));
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        } else {
-            let toStore = {
-                email: localStorage.getItem('email') || '',
-                id: localStorage.getItem('id') || '',
-                phone: localStorage.getItem('phone') || '',
-                name: localStorage.getItem('name') || '',
-            }
-            getUser().then(({ user }) => {
-                if (user) {
-                    for (const key in user) {
-                        if (Object.keys(toStore).includes(key)) {
-                            localStorage.setItem(key, user[key]);
-                            toStore = {
-                                ...toStore,
-                                [key]: user[key],
-                            };
-                        } else 
-                        localStorage.removeItem(key);
-                    }
-                    setData(toStore);
-                }
-            }).catch(console.error);
-        }
-    }, [])
+export default function SessionComponent({ data }: { data: Record<string, any> }) {
   return (
     <Dropdown>
         <DropdownButton as={SidebarItem}>

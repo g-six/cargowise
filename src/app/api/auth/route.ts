@@ -17,9 +17,20 @@ export async function GET(request: NextRequest) {
 	let metadata = user?.user_metadata
 
 	if (!user) {
-		return NextResponse.json(
-            { message: 'Session not found', token, error },
+        const refresh_token = request.headers.get('x-refresh-token') || '';
+        if (!refresh_token) return NextResponse.json(
+            { message: 'Session not found', token },
             { status: 401 }
+        )
+        const { data, error } = await supabase.auth.refreshSession({ refresh_token })
+        const { session } = data
+		
+        return NextResponse.json(
+            {
+                message: 'Session found',
+                ...session,
+            },
+            { status: 200 }
         )
 	}
 
