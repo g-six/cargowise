@@ -1,4 +1,5 @@
 import type React from 'react'
+import SessionComponent from './session'
 
 export function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

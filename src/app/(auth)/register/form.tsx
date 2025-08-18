@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/button'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Field, Label } from '@/components/fieldset'
+import { Field, FieldGroup, Label } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import { Select } from '@/components/select'
 import { Strong, Text, TextLink } from '@/components/text'
@@ -13,22 +13,16 @@ export const metadata: Metadata = {
 
 export default function RegisterForm() {
   return (
-    <>
+    <FieldGroup>
       <Field>
         <Label>Email</Label>
         <Input type="email" name="email" />
       </Field>
       <Field>
-        <Label>Full name</Label>
-        <Input name="name" />
-      </Field>
-      <Field>
         <Label>Password</Label>
         <Input type="password" name="password" autoComplete="new-password" />
       </Field>
-      <Button type="button" className="w-full" onClick={() => {
-        
-      }}>
+      <Button type="submit" className="w-full">
         Create account
       </Button>
       <Text>
@@ -37,6 +31,6 @@ export default function RegisterForm() {
           <Strong>Sign in</Strong>
         </TextLink>
       </Text>
-    </>
+    </FieldGroup>
   )
 }
