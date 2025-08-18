@@ -32,6 +32,7 @@ import {
   PlusIcon,
   ShieldCheckIcon,
   UserCircleIcon,
+  UserPlusIcon,
 } from '@heroicons/react/16/solid'
 import {
   Cog6ToothIcon,
@@ -42,6 +43,7 @@ import {
   TicketIcon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
+import JobOrderSidebarShortcut from '@/components/shortcuts/job-order-button'
 
 function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
   return (
@@ -136,7 +138,7 @@ export function ApplicationLayout({
               </SidebarItem>
               <SidebarItem href="/jobs" current={pathname.startsWith('/jobs')}>
                 <TicketIcon />
-                <SidebarLabel>Orders</SidebarLabel>
+                <SidebarLabel>Jobs</SidebarLabel>
               </SidebarItem>
               <SidebarItem href="/settings" current={pathname.startsWith('/settings')}>
                 <Cog6ToothIcon />
@@ -145,12 +147,8 @@ export function ApplicationLayout({
             </SidebarSection>
 
             <SidebarSection className="max-lg:hidden">
-              <SidebarHeading>Upcoming Events</SidebarHeading>
-              {events.map((event) => (
-                <SidebarItem key={event.id} href={event.url}>
-                  {event.name}
-                </SidebarItem>
-              ))}
+              <SidebarHeading>Shortcuts</SidebarHeading>
+              <JobOrderSidebarShortcut />
             </SidebarSection>
 
             <SidebarSpacer />
@@ -187,7 +185,7 @@ export function ApplicationLayout({
         </Sidebar>
       }
     >
-      {children}
+        {children}
     </SidebarLayout>
   )
 }

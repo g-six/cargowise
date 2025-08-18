@@ -1,19 +1,19 @@
 'use client'
-import { Dialog, DialogActions, DialogBody, DialogButton, DialogDescription, DialogTitle } from '@/components/dialog'
+import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog'
 import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import { Button } from '@/components/button'
-import { UserPlusIcon } from '@heroicons/react/16/solid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export function CreateJobOrderForm({ onSuccess }: { onSuccess(record: any): void }) {
-    const [isOpen, setIsOpen] = useState(false)
+export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show }: { toggle?(v: boolean): void, 'data-show'?: boolean; onSuccess?(record: any): void; closeListener?(): void }) {
+    const [isOpen, setIsOpen] = useState(show);
     const [payload, setPayload] = useState({
-        id: '',
+        job: '',
         shipment: ''
     })
 
     function createJobOrder() {
+        if (payload.job && payload.shipment)
         fetch('/api/jobs', {
             method: 'POST',
             headers: {
@@ -22,40 +22,55 @@ export function CreateJobOrderForm({ onSuccess }: { onSuccess(record: any): void
             body: JSON.stringify(payload),
         }).then((res) => {
             if (res.ok) {
-                setIsOpen(false)
-                res.json().then(({ record }) => onSuccess(record))
+                setPayload({ job: '', shipment: '' })
+                res.json().then(({ record }) => onSuccess?.(record))
                 // Optionally, you might want to refresh the job list or give feedback to the user here
             }
         })
     }
+
+    useEffect(() => {
+        setIsOpen(show)
+    }, [show])
+
 	return (
-		<DialogButton icon={<UserPlusIcon />} label='Create job order' onClick={(e) => {
-            setIsOpen(true)
+        <Dialog size="xs" open={isOpen} onClose={() => {
+            setPayload({ job: '', shipment: '' })
         }}>
-			<Dialog size="lg" open={isOpen} onClose={() => setIsOpen(false)}>
-				<DialogTitle>Create job order</DialogTitle>
-				<DialogDescription>Fill in the details to create a new job order.</DialogDescription>
-				<DialogBody>
-                    <Field>
-                        <Label>Job #</Label>
-                        <Input name="id" defaultValue={payload.id} onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })} onKeyUp={e => {
-                            if (e.key === 'Enter') {
-                                createJobOrder()
-                            }
-                        }} />
-                    </Field>
-                </DialogBody>
-				<DialogActions>
-					<Button type="button" plain onClick={() => setIsOpen(false)}>
-						Cancel
-					</Button>
-					<Button type="submit" color="lime" onClick={() => {
-                        createJobOrder()
-                    }}>
-						Create
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</DialogButton>
+            <DialogTitle>Create job order</DialogTitle>
+            <DialogDescription>Fill in the details to create a new job order.</DialogDescription>
+            <DialogBody className='flex flex-col gap-6'>
+                <Field>
+                    <Label>Job #</Label>
+                    <Input name="job" defaultValue={payload.job} onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })} onKeyUp={e => {
+                        if (e.key === 'Enter') {
+                            createJobOrder()
+                        }
+                    }} />
+                </Field>
+
+                <Field>
+                    <Label>Shipment #</Label>
+                    <Input name="shipment" defaultValue={payload.shipment} onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })} onKeyUp={e => {
+                        if (e.key === 'Enter') {
+                            createJobOrder()
+                        }
+                    }} />
+                </Field>
+            </DialogBody>
+            <DialogActions>
+                <Button type="button" plain onClick={() => {
+                    setIsOpen(false);
+                    closeListener?.();
+                }}>
+                    Cancel
+                </Button>
+                <Button type="submit" color="lime" onClick={() => {
+                    createJobOrder()
+                }}>
+                    Create
+                </Button>
+            </DialogActions>
+        </Dialog>
 	)
 }

@@ -5,17 +5,19 @@ export default function List({ data }: { data: any[] }) {
 			<TableHead>
 				<TableRow>
 					<TableHeader>Job number</TableHeader>
-					<TableHeader>Shipments</TableHeader>
-					<TableHeader className="text-right">Created</TableHeader>
+					<TableHeader>Shipment</TableHeader>
+					<TableHeader>Location</TableHeader>
+					<TableHeader className="text-right">Last update</TableHeader>
 				</TableRow>
 			</TableHead>
 			<TableBody>
-				{data.map((item: Record<string, any>) => (
-					<TableRow key={item.id} href={item.url} title={`Order #${item.id}`}>
-						<TableCell>{item.id}</TableCell>
-						<TableCell>{item.shipments?.map((service: Record<string, any>) => service.id).join(', ')}</TableCell>
+				{data.map((item: Record<string, any>, idx) => (
+					<TableRow key={idx} href={item.url} title={`Order #${item.job}`}>
+						<TableCell>{item.job}</TableCell>
+						<TableCell>{item.shipment}</TableCell>
+						<TableCell>{[item.latitude, item.longitude].filter(n => !isNaN(n)).join(' ')}</TableCell>
 						<TableCell className="text-right text-zinc-500">
-							{new Date(item.created_at).toLocaleDateString(undefined, {
+							{new Date(item.updated_at).toLocaleDateString(undefined, {
 								year: 'numeric',
 								month: '2-digit',
 								day: '2-digit',
