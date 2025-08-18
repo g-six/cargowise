@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default function Settings() {
+    return <>Work in progress...</>
   return (
     <form method="post" className="mx-auto max-w-4xl">
       <Heading>Settings</Heading>
