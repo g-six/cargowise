@@ -25,7 +25,7 @@ export default function JobsPageContainer(p: {data: any[]}) {
     useEffect(() => {
         const t = setTimeout(() => {
             if (filters.keyword.length > 2)
-            fetch(['/api/jobs',filters.keyword].filter(Boolean).join('/'), {
+            fetch(['/api/jobs',filters.keyword].filter(Boolean).join('?job='), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

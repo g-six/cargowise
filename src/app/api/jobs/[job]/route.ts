@@ -1,4 +1,4 @@
-import { filterShipments } from '@/services/shipments'
+import { getShipmentByJob } from '@/services/shipments'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -8,11 +8,14 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Job not specified" }, { status: 400 })
     }
 
-    const records = await filterShipments({ job })
-
-    if (records && records.length > 0) {
-        return NextResponse.json(records, { status: 200 })
+    const record = await getShipmentByJob(job)
+    if (!record) {
+        return NextResponse.json(
+            { message: 'Shipment not found' },
+            {
+                status: 404,
+            }
+        )
     }
-
-    return NextResponse.json([])
+    return NextResponse.json(record, { status: 200 })
 }

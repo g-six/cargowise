@@ -20,12 +20,23 @@ export async function filterShipments(filters: Record<string, any>) {
 }
 
 export async function getShipment(shipment: string) {
-	const { data, error } = await supabase.from('shipment_jobs').select('*').eq('shipment', shipment).single()
+	const { data, error } = await supabase.from('shipment_jobs').select('*').eq('shipment', shipment)
 	if (!data && error) {
 		console.warn('Error fetching shipment:', error)
 		return null
 	}
-	return data
+	return data.pop()
+}
+
+export async function getShipmentByJob(job: string) {
+    console.log('Fetching shipment by job:', job)
+	const { data, error } = await supabase.from('shipment_jobs').select('*').ilike('job', job)
+	if (!data && error) {
+		console.warn('Error fetching shipment:', error)
+		return null
+	}
+
+	return data.pop()
 }
 
 export async function createShipment(data :{
