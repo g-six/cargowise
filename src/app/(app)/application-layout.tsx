@@ -2,119 +2,106 @@
 
 import { Avatar } from '@/components/avatar'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownDivider,
-  DropdownItem,
-  DropdownLabel,
-  DropdownMenu,
+	Dropdown,
+	DropdownButton,
+	DropdownDivider,
+	DropdownItem,
+	DropdownLabel,
+	DropdownMenu,
 } from '@/components/dropdown'
 import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
+import SessionComponent from '@/components/session'
 import {
-  Sidebar,
-  SidebarBody,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarHeading,
-  SidebarItem,
-  SidebarLabel,
-  SidebarSection,
-  SidebarSpacer,
+	Sidebar,
+	SidebarBody,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarItem,
+	SidebarLabel,
+	SidebarSection,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { getEvents } from '@/data'
 import {
-  ArrowRightStartOnRectangleIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  Cog8ToothIcon,
-  LightBulbIcon,
-  PlusIcon,
-  ShieldCheckIcon,
-  UserCircleIcon,
-  UserPlusIcon,
+	ArrowRightStartOnRectangleIcon,
+	ChevronDownIcon,
+	Cog8ToothIcon,
+	LightBulbIcon,
+	ShieldCheckIcon,
+	UserCircleIcon,
 } from '@heroicons/react/16/solid'
-import {
-  Cog6ToothIcon,
-  HomeIcon,
-  QuestionMarkCircleIcon,
-  SparklesIcon,
-  Square2StackIcon,
-  TicketIcon,
-} from '@heroicons/react/20/solid'
+import { HomeIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
-import JobOrderSidebarShortcut from '@/components/shortcuts/job-order-button'
-import SessionComponent from '@/components/session'
 
 export function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
-  return (
-    <DropdownMenu className="min-w-64" anchor={anchor}>
-      <DropdownItem href="#">
-        <UserCircleIcon />
-        <DropdownLabel>My account</DropdownLabel>
-      </DropdownItem>
-      <DropdownDivider />
-      <DropdownItem href="#">
-        <ShieldCheckIcon />
-        <DropdownLabel>Privacy policy</DropdownLabel>
-      </DropdownItem>
-      <DropdownItem href="#">
-        <LightBulbIcon />
-        <DropdownLabel>Share feedback</DropdownLabel>
-      </DropdownItem>
-      <DropdownDivider />
-      <DropdownItem href="/login">
-        <ArrowRightStartOnRectangleIcon />
-        <DropdownLabel>Sign out</DropdownLabel>
-      </DropdownItem>
-    </DropdownMenu>
-  )
+	return (
+		<DropdownMenu className="min-w-64" anchor={anchor}>
+			<DropdownItem href="#">
+				<UserCircleIcon />
+				<DropdownLabel>My account</DropdownLabel>
+			</DropdownItem>
+			<DropdownDivider />
+			<DropdownItem href="#">
+				<ShieldCheckIcon />
+				<DropdownLabel>Privacy policy</DropdownLabel>
+			</DropdownItem>
+			<DropdownItem href="#">
+				<LightBulbIcon />
+				<DropdownLabel>Share feedback</DropdownLabel>
+			</DropdownItem>
+			<DropdownDivider />
+			<DropdownItem href="/login">
+				<ArrowRightStartOnRectangleIcon />
+				<DropdownLabel>Sign out</DropdownLabel>
+			</DropdownItem>
+		</DropdownMenu>
+	)
 }
 
 export function ApplicationLayout({
-  events,
-  children,
+	events,
+	children,
 }: {
-  events: Awaited<ReturnType<typeof getEvents>>
-  children: React.ReactNode
+	events: Awaited<ReturnType<typeof getEvents>>
+	children: React.ReactNode
 }) {
-  let pathname = usePathname()
+	let pathname = usePathname()
 
-  return (
-    <SidebarLayout
-      navbar={
-        <Navbar>
-          <NavbarSpacer />
-          <NavbarSection>
-            <Dropdown>
-              <DropdownButton as={NavbarItem}>
-                <Avatar src="/users/erica.jpg" square />
-              </DropdownButton>
-              <AccountDropdownMenu anchor="bottom end" />
-            </Dropdown>
-          </NavbarSection>
-        </Navbar>
-      }
-      sidebar={
-        <Sidebar>
-          <SidebarHeader>
-            <Dropdown>
-              <DropdownButton as={SidebarItem}>
-                <Avatar src="/teams/catalyst.svg" />
-                <SidebarLabel>Cargowise</SidebarLabel>
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                <DropdownItem href="/settings">
-                  <Cog8ToothIcon />
-                  <DropdownLabel>Settings</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="#">
-                  <Avatar slot="icon" src="/teams/catalyst.svg" />
-                  <DropdownLabel>Cargowise</DropdownLabel>
-                </DropdownItem>
-                {/* <DropdownItem href="#">
+	return (
+		<SidebarLayout
+			navbar={
+				<Navbar>
+					<NavbarSpacer />
+					<NavbarSection>
+						<Dropdown>
+							<DropdownButton as={NavbarItem}>
+								<Avatar src="/users/erica.jpg" square />
+							</DropdownButton>
+							<AccountDropdownMenu anchor="bottom end" />
+						</Dropdown>
+					</NavbarSection>
+				</Navbar>
+			}
+			sidebar={
+				<Sidebar>
+					<SidebarHeader>
+						<Dropdown>
+							<DropdownButton as={SidebarItem}>
+								<Avatar src="/teams/catalyst.svg" />
+								<SidebarLabel>Cargowise</SidebarLabel>
+								<ChevronDownIcon />
+							</DropdownButton>
+							<DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
+								<DropdownItem href="/settings">
+									<Cog8ToothIcon />
+									<DropdownLabel>Settings</DropdownLabel>
+								</DropdownItem>
+								<DropdownDivider />
+								<DropdownItem href="#">
+									<Avatar slot="icon" src="/teams/catalyst.svg" />
+									<DropdownLabel>Cargowise</DropdownLabel>
+								</DropdownItem>
+								{/* <DropdownItem href="#">
                   <Avatar slot="icon" initials="BE" className="bg-purple-500 text-white" />
                   <DropdownLabel>Big Events</DropdownLabel>
                 </DropdownItem>
@@ -123,17 +110,17 @@ export function ApplicationLayout({
                   <PlusIcon />
                   <DropdownLabel>New team&hellip;</DropdownLabel>
                 </DropdownItem> */}
-              </DropdownMenu>
-            </Dropdown>
-          </SidebarHeader>
+							</DropdownMenu>
+						</Dropdown>
+					</SidebarHeader>
 
-          <SidebarBody>
-            <SidebarSection>
-              <SidebarItem href="/" current={pathname === '/'}>
-                <HomeIcon />
-                <SidebarLabel>Home</SidebarLabel>
-              </SidebarItem>
-              {/* <SidebarItem href="/events" current={pathname.startsWith('/events')}>
+					<SidebarBody>
+						<SidebarSection>
+							<SidebarItem href="/" current={pathname === '/'}>
+								<HomeIcon />
+								<SidebarLabel>Home</SidebarLabel>
+							</SidebarItem>
+							{/* <SidebarItem href="/events" current={pathname.startsWith('/events')}>
                 <Square2StackIcon />
                 <SidebarLabel>Events</SidebarLabel>
               </SidebarItem>
@@ -145,14 +132,14 @@ export function ApplicationLayout({
                 <Cog6ToothIcon />
                 <SidebarLabel>Settings</SidebarLabel>
               </SidebarItem> */}
-            </SidebarSection>
+						</SidebarSection>
 
-            {/* <SidebarSection className="max-lg:hidden">
+						{/* <SidebarSection className="max-lg:hidden">
               <SidebarHeading>Shortcuts</SidebarHeading>
               <JobOrderSidebarShortcut />
             </SidebarSection> */}
 
-            {/* <SidebarSpacer />
+						{/* <SidebarSpacer />
 
             <SidebarSection>
               <SidebarItem href="#">
@@ -164,15 +151,15 @@ export function ApplicationLayout({
                 <SidebarLabel>Changelog</SidebarLabel>
               </SidebarItem>
             </SidebarSection> */}
-          </SidebarBody>
+					</SidebarBody>
 
-          <SidebarFooter className="max-lg:hidden">
-            <SessionComponent />
-          </SidebarFooter>
-        </Sidebar>
-      }
-    >
-        {children}
-    </SidebarLayout>
-  )
+					<SidebarFooter className="max-lg:hidden">
+						<SessionComponent />
+					</SidebarFooter>
+				</Sidebar>
+			}
+		>
+			{children}
+		</SidebarLayout>
+	)
 }
