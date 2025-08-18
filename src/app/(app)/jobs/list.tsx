@@ -4,10 +4,10 @@ export default function List({ data }: { data: any[] }) {
 		<Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
 			<TableHead>
 				<TableRow>
-					<TableHeader>Job number</TableHeader>
-					<TableHeader>Shipment</TableHeader>
+					<TableHeader className='w-12'>Job number</TableHeader>
+					<TableHeader className='w-12'>Shipment</TableHeader>
 					<TableHeader>Location</TableHeader>
-					<TableHeader className="text-right">Last update</TableHeader>
+					<TableHeader className="text-right w-12">Last update</TableHeader>
 				</TableRow>
 			</TableHead>
 			<TableBody>

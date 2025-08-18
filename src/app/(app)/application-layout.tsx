@@ -132,7 +132,7 @@ export function ApplicationLayout({
                 <HomeIcon />
                 <SidebarLabel>Home</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/events" current={pathname.startsWith('/events')}>
+              {/* <SidebarItem href="/events" current={pathname.startsWith('/events')}>
                 <Square2StackIcon />
                 <SidebarLabel>Events</SidebarLabel>
               </SidebarItem>
@@ -143,15 +143,15 @@ export function ApplicationLayout({
               <SidebarItem href="/settings" current={pathname.startsWith('/settings')}>
                 <Cog6ToothIcon />
                 <SidebarLabel>Settings</SidebarLabel>
-              </SidebarItem>
+              </SidebarItem> */}
             </SidebarSection>
 
-            <SidebarSection className="max-lg:hidden">
+            {/* <SidebarSection className="max-lg:hidden">
               <SidebarHeading>Shortcuts</SidebarHeading>
               <JobOrderSidebarShortcut />
-            </SidebarSection>
+            </SidebarSection> */}
 
-            <SidebarSpacer />
+            {/* <SidebarSpacer />
 
             <SidebarSection>
               <SidebarItem href="#">
@@ -162,10 +162,10 @@ export function ApplicationLayout({
                 <SparklesIcon />
                 <SidebarLabel>Changelog</SidebarLabel>
               </SidebarItem>
-            </SidebarSection>
+            </SidebarSection> */}
           </SidebarBody>
 
-          <SidebarFooter className="max-lg:hidden">
+          {/* <SidebarFooter className="max-lg:hidden">
             <Dropdown>
               <DropdownButton as={SidebarItem}>
                 <span className="flex min-w-0 items-center gap-3">
@@ -181,7 +181,7 @@ export function ApplicationLayout({
               </DropdownButton>
               <AccountDropdownMenu anchor="top start" />
             </Dropdown>
-          </SidebarFooter>
+          </SidebarFooter> */}
         </Sidebar>
       }
     >

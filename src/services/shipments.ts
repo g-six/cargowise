@@ -9,6 +9,16 @@ export async function getShipmentJobs() {
 	return data
 }
 
+export async function filterShipments(filters: Record<string, any>) {
+    const { job, shipment } = filters;
+	const { data, error } = await supabase.from('shipment_jobs').select('*').ilike(job ? 'job' : 'shipment', `${job || shipment}%`).order('updated_at', { ascending: false })
+	if (!data && error) {
+		console.warn('Error fetching shipment:', error)
+		return null
+	}
+	return data
+}
+
 export async function getShipment(shipment: string) {
 	const { data, error } = await supabase.from('shipment_jobs').select('*').eq('shipment', shipment).single()
 	if (!data && error) {
