@@ -1,7 +1,7 @@
 import '@/styles/tailwind.css'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = await {
   title: {
     template: '%s - Cargowise',
     default: 'Cargowise',

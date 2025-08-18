@@ -10,6 +10,7 @@ import {
 	DropdownMenu,
 } from '@/components/dropdown'
 import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
+import { PublicLayout } from '@/components/public-layout'
 import SessionComponent from '@/components/session'
 import {
 	Sidebar,
@@ -21,7 +22,6 @@ import {
 	SidebarSection,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
-import { StackedLayout } from '@/components/stacked-layout'
 import {
 	ArrowRightStartOnRectangleIcon,
 	ChevronDownIcon,
@@ -31,14 +31,12 @@ import {
 	UserCircleIcon,
 } from '@heroicons/react/16/solid'
 import { HomeIcon } from '@heroicons/react/20/solid'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Logo } from '../logo'
-import Image from 'next/image'
 
-const navItems = [
-	{ label: '...', url: '/', Icon: <Logo className='size-4' /> },
-]
+const navItems = [{ label: '...', url: '/', Icon: <Logo className="size-4" /> }]
 
 export function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
 	return (
@@ -68,36 +66,51 @@ export function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom 
 export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 	let pathname = usePathname()
 	const [data, setData] = useState<Record<string, any>>({})
-    const [nav, setNav] = useState(navItems)
+	const [organization, setOrganization] = useState<Record<string, any>>({})
+	const [nav, setNav] = useState(navItems)
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 	async function getUser(
 		jwt: string = localStorage.getItem('access_token') || '',
 		refresh_token: string = localStorage.getItem('refresh_token') || ''
 	) {
 		if (!jwt) {
-			await fetch('/api/domains/' + window.location.hostname).then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch domain organization')
-                }
-                return response.json()
-            }).then((domain) => {
-                if (domain) {
-                    setNav((prev) => [
-                        {
-                            label: domain.name || 'Domain',
-                            url: '/domains/' + domain.domain,
-                            Icon: domain.logo ? <Image alt={domain.name} src={domain.logo} width={16} height={16} /> : <Logo className='size-4' />,
-                        },
-                        ...prev.slice(1),
-                    ])
-                    console.table(domain)
-                }
-            })
+			await fetch('/api/domains/' + window.location.hostname)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Failed to fetch domain organization')
+					}
+					return response.json()
+				})
+				.then((domain) => {
+					if (domain) {
+						for (const key in domain) {
+							if (domain[key]) {
+								localStorage.setItem(key, typeof domain[key] === 'object' ? JSON.stringify(domain[key]) : domain[key])
+							} else {
+								localStorage.removeItem(key)
+							}
+						}
+						setNav((prev) => [
+							{
+								label: domain.name || 'Domain',
+								url: '/domains/' + domain.domain,
+								Icon: domain.logo ? (
+									<Image alt={domain.name} src={domain.logo} width={16} height={16} />
+								) : (
+									<Logo className="size-4" />
+								),
+							},
+							...prev.slice(1),
+						])
+						setOrganization(domain)
+					}
+				})
 		}
 		const response = await fetch('/api/auth', {
 			headers: {
 				Authorization: `Bearer ${jwt}`,
 				'X-Refresh-Token': refresh_token,
-                'X-Domain': window.location.hostname, // Pass the domain if needed
+				'X-Domain': window.location.hostname, // Pass the domain if needed
 			},
 		})
 		if (!response.ok) {
@@ -106,6 +119,13 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		return response.json()
 	}
 	useEffect(() => {
+		let toStore = {
+			email: localStorage.getItem('email') || '',
+			id: localStorage.getItem('id') || '',
+			phone: localStorage.getItem('phone') || '',
+			name: localStorage.getItem('name') || '',
+			slug: localStorage.getItem('slug') || '',
+		}
 		if (location && location?.hash) {
 			new URLSearchParams(location.hash.slice(1)).forEach((value, key) => {
 				localStorage.setItem(key, value)
@@ -116,12 +136,6 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 				element.scrollIntoView({ behavior: 'smooth' })
 			}
 		} else {
-			let toStore = {
-				email: localStorage.getItem('email') || '',
-				id: localStorage.getItem('id') || '',
-				phone: localStorage.getItem('phone') || '',
-				name: localStorage.getItem('name') || '',
-			}
 			getUser()
 				.then(({ user }) => {
 					if (user) {
@@ -134,7 +148,6 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 								}
 							} else localStorage.removeItem(key)
 						}
-						setData(toStore)
 					}
 				})
 				.catch((w) => {
@@ -143,74 +156,10 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 					}
 				})
 		}
+		setData(toStore)
 	}, [])
 
-	if (!data?.email)
-		return (
-			<StackedLayout
-				navbar={
-					<Navbar>
-						<NavbarSection className="max-lg:hidden">
-							{nav.map(({ label, url, Icon }) => (
-								<NavbarItem key={label} href={url}>
-                                    {Icon}
-									{label}
-								</NavbarItem>
-							))}
-						</NavbarSection>
-						<NavbarSpacer />
-						<NavbarSection>
-							<Dropdown>
-								<DropdownButton as={NavbarItem}>
-									<Avatar src="/users/erica.jpg" square />
-								</DropdownButton>
-								<AccountDropdownMenu anchor="bottom end" />
-							</Dropdown>
-						</NavbarSection>
-					</Navbar>
-				}
-				sidebar={
-					<Sidebar>
-						<SidebarHeader>
-							<Dropdown>
-								<DropdownButton as={SidebarItem}>
-									<Avatar src="/teams/catalyst.svg" />
-									<SidebarLabel>Cargowise</SidebarLabel>
-									<ChevronDownIcon />
-								</DropdownButton>
-								<DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-									<DropdownItem href="/settings">
-										<Cog8ToothIcon />
-										<DropdownLabel>Settings</DropdownLabel>
-									</DropdownItem>
-									<DropdownDivider />
-									<DropdownItem href="#">
-										<Avatar slot="icon" src="/teams/catalyst.svg" />
-										<DropdownLabel>Cargowise</DropdownLabel>
-									</DropdownItem>
-								</DropdownMenu>
-							</Dropdown>
-						</SidebarHeader>
-
-						<SidebarBody>
-							<SidebarSection>
-								{nav.map(({ label, url, Icon }) => (
-									<SidebarItem key={label} href={url}>
-										{Icon}
-
-										<SidebarLabel>{label}</SidebarLabel>
-									</SidebarItem>
-								))}
-							</SidebarSection>
-						</SidebarBody>
-					</Sidebar>
-				}
-			>
-				{children}
-			</StackedLayout>
-		)
-
-	return (
+	return data?.access_token || data?.slug === 'cargowise' ? (
 		<SidebarLayout
 			navbar={
 				<Navbar>
@@ -304,5 +253,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		>
 			{children}
 		</SidebarLayout>
+	) : (
+		<PublicLayout data-organization={organization}>{children}</PublicLayout>
 	)
 }

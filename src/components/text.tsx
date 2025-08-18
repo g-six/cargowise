@@ -23,6 +23,18 @@ export function TextLink({ className, ...props }: React.ComponentPropsWithoutRef
   )
 }
 
+export function BrandedTextLink({ className, brand, ...props }: React.ComponentPropsWithoutRef<typeof Link> & { brand: string }) {
+  return (
+    <Link
+      {...props}
+      className={clsx(
+        className,
+        `text-${brand} underline decoration-${brand}-950/50 data-hover:decoration-${brand}-950 dark:text-${brand}-200 dark:decoration-${brand}-200/50 dark:data-hover:decoration-${brand}-200`
+      )}
+    />
+  )
+}
+
 export function Strong({ className, ...props }: React.ComponentPropsWithoutRef<'strong'>) {
   return <strong {...props} className={clsx(className, 'font-medium text-zinc-950 dark:text-white')} />
 }
