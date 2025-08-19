@@ -65,7 +65,7 @@ export function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom 
 
 export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 	let pathname = usePathname()
-	const [data, setData] = useState<Record<string, any>>()
+	const [data, setData] = useState<Record<string, any>>({})
 	const [o, setOrganization] = useState<Record<string, any>>({})
 	const [nav, setNav] = useState(navItems)
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
