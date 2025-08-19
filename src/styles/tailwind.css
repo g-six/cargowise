@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@source inline("row-span-2", "row-span-3", "row-span-4", "row-span-5");
 
 @theme {
   --font-sans: Inter, sans-serif;
