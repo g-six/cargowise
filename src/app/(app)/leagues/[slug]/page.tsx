@@ -35,7 +35,7 @@ export default async function LeaguePage(p: { params: Promise<{ slug: string }> 
 					{league?.name}
 				</p>
 				<div className={`mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-${pricing.length || 2}`}>
-					<div className={`relative lg:row-span-${pricing.length || 2}`}>
+					<div className={`relative row-span-${pricing.length || 2}`}>
 						<div className="absolute inset-px rounded-lg max-lg:rounded-t-4xl bg-white lg:rounded-l-4xl dark:bg-gray-800" />
 						<div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
 							<div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
