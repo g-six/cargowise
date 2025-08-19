@@ -19,6 +19,24 @@ export default function PlanSelector({
 }) {
 	const [isOpen, toggleForm] = useState(false)
 	const [step, setStep] = useState(1)
+    const [payload, setPayload] = useState<Record<string, string>>({})
+
+    async function createOrganization(data: Record<string, string>) {
+        const response = await fetch('/api/organizations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+
+        if (!response.ok) {
+            console.error('Failed to create organization:', response.statusText)
+            return null
+        }
+
+        return response.json()
+    }
 
 	return (
 		<>
@@ -40,17 +58,17 @@ export default function PlanSelector({
 							<div className={`grid-cols-4 space-y-6 sm:grid sm:space-x-2 ${step == 1 ? 'block' : 'hidden'}`}>
 								<Field className="col-span-2">
 									<Label>Organization name</Label>
-									<Input type="text" placeholder="PF Academy" name="organization" />
+									<Input type="text" placeholder="PF Academy" name="organization" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
 								<Field className="col-span-2">
 									<Label>Team name</Label>
-									<Input type="text" placeholder="Athletic Club" name="team" />
+									<Input type="text" placeholder="Athletic Club" name="team" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
 								<Field>
 									<Label>Birth Year</Label>
-									<Select name="year">
+									<Select name="year" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))}>
 										{Array.from({ length: price.min_year - price.max_year }, (_, i) => {
 											const year = price.max_year + i
 											return (
@@ -66,17 +84,17 @@ export default function PlanSelector({
 							<div className={`grid-cols-2 space-y-6 sm:grid sm:space-x-2 ${step == 1 ? 'block' : 'hidden'}`}>
 								<Field>
 									<Label>First name</Label>
-									<Input type="text" placeholder="Ollie" name="fname" />
+									<Input type="text" placeholder="Ollie" name="fname" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
 								<Field>
 									<Label>Last name</Label>
-									<Input type="text" placeholder="Deer" name="lname" />
+									<Input type="text" placeholder="Deer" name="lname" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
 								<Field>
 									<Label>Date of Birth</Label>
-									<Input type="date" name="dob" />
+									<Input type="date" name="dob" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 							</div>
 						)}
@@ -85,20 +103,20 @@ export default function PlanSelector({
 							<div className="grid-cols-2 space-y-6 sm:grid sm:space-x-2">
 								<Field>
 									<Label>Email</Label>
-									<Input type="email" placeholder="Email address" name="email" />
+									<Input type="email" placeholder="Email address" name="email" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 								<Field>
 									<Label>Phone</Label>
-									<Input type="tel" placeholder="(XXX) XXX-XXXX" name="phone" />
+									<Input type="tel" placeholder="(XXX) XXX-XXXX" name="phone" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 								<Field>
 									<Label>First name</Label>
-									<Input type="text" placeholder="John" name="first_name" />
+									<Input type="text" placeholder="John" name="first_name" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
 								<Field>
 									<Label>Last name</Label>
-									<Input type="text" placeholder="Deer" name="last_name" />
+									<Input type="text" placeholder="Deer" name="last_name" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 							</div>
 						</Fieldset>
@@ -119,7 +137,21 @@ export default function PlanSelector({
 						onClick={() => {
                             if (step < 2)
 							setStep(step => (step + 1))
+                            else {
+                                createOrganization(payload).then(console.log).catch(console.warn)
+                            }
 						}}
+                        className='lg:hidden'
+					>
+						<span>{step === 2 ? 'Sign Up' : 'Next'}</span> {step === 2 ? <ArrowDownOnSquareIcon /> : <ArrowRightIcon />}
+					</Button>
+					<Button
+						color={color as any}
+						onClick={() => {
+                            const { email, phone } = payload
+                            createOrganization({ email, phone, name: payload.organization }).then(console.log).catch(console.warn)
+						}}
+                        className='max-lg:hidden'
 					>
 						<span className='max-lg:hidden'>Sign Up</span><span className='lg:hidden'>{step === 2 ? 'Sign Up' : 'Next'}</span> {step === 2 ? <ArrowDownOnSquareIcon className='max-lg:hidden' /> : <ArrowRightIcon className='max-lg:hidden' />}
 					</Button>
