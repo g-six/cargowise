@@ -5,7 +5,7 @@ import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } fro
 import { Field, Fieldset, Label, Legend } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import { Select } from '@/components/select'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { ArrowDownOnSquareIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 
 export default function PlanSelector({
@@ -51,8 +51,8 @@ export default function PlanSelector({
 								<Field>
 									<Label>Birth Year</Label>
 									<Select name="year">
-										{Array.from({ length: 12 }, (_, i) => {
-											const year = new Date().getFullYear() - i - 5
+										{Array.from({ length: price.min_year - price.max_year }, (_, i) => {
+											const year = price.max_year + i
 											return (
 												<option key={year} value={year}>
 													{year}
@@ -105,13 +105,23 @@ export default function PlanSelector({
 					</div>
 				</DialogBody>
 				<DialogActions>
+					{step > 1 && <Button
+						onClick={() => {
+                            if (step > 1)
+							setStep(prev => (prev - 1))
+						}}
+                        className='lg:hidden'
+					>
+						<ArrowLeftIcon className='max-lg:hidden' /> Back
+					</Button>}
 					<Button
 						color={color as any}
 						onClick={() => {
-							setStep(step === 1 ? 2 : 1)
+                            if (step < 2)
+							setStep(step => (step + 1))
 						}}
 					>
-						Next <ArrowRightIcon />
+						<span className='max-lg:hidden'>Sign Up</span><span className='lg:hidden'>{step === 2 ? 'Sign Up' : 'Next'}</span> {step === 2 ? <ArrowDownOnSquareIcon className='max-lg:hidden' /> : <ArrowRightIcon className='max-lg:hidden' />}
 					</Button>
 				</DialogActions>
 			</Dialog>
