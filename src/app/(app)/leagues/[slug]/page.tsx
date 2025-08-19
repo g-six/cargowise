@@ -59,7 +59,7 @@ export default async function LeaguePage(p: { params: Promise<{ slug: string }> 
 						</div>
 						<div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5 max-lg:rounded-t-4xl lg:rounded-l-4xl dark:outline-white/15" />
 					</div>
-                    {pricing?.map((card, lindex) => (<div key={lindex} className={`relative max-lg:row-start-${lindex + 2} lg:col-start-2 row-span-1` }>
+                    {pricing?.map((card, lindex) => (<div key={lindex} className={`relative max-lg:row-start-${lindex + 2} lg:col-start-2` }>
 						<div className="absolute inset-px rounded-lg bg-white dark:bg-gray-800" />
 						<div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
 							<div className="px-8 pt-8 sm:px-10 sm:pt-10">
@@ -80,7 +80,7 @@ export default async function LeaguePage(p: { params: Promise<{ slug: string }> 
 						</div>
 						<div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5 dark:outline-white/15" />
 					</div>))}
-					<div className={`relative ${pricing?.length ? `max-lg:row-start-${pricing?.length + 2}` : ''} lg:col-start-3 lg:row-start-1`}>
+					<div className={`relative ${pricing?.length ? `max-lg:row-start-${pricing?.length + 2}` : ''} lg:col-start-3 lg:row-start-1 row-span-1`}>
 						<div className="absolute inset-px rounded-lg bg-white lg:rounded-tr-4xl dark:bg-gray-800" />
 						<div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
 							<div className="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
