@@ -65,8 +65,8 @@ export function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom 
 
 export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 	let pathname = usePathname()
-	const [data, setData] = useState<Record<string, any>>({})
-	const [organization, setOrganization] = useState<Record<string, any>>({})
+	const [data, setData] = useState<Record<string, any>>()
+	const [o, setOrganization] = useState<Record<string, any>>({})
 	const [nav, setNav] = useState(navItems)
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 	async function getUser(
@@ -158,8 +158,8 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		}
 		setData(toStore)
 	}, [])
-
-	return data?.access_token || data?.slug === 'cargowise' ? (
+    
+	return data?.access_token || o.organization === 'cargowise' ? (
 		<SidebarLayout
 			navbar={
 				<Navbar>
@@ -253,7 +253,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		>
 			{children}
 		</SidebarLayout>
-	) : (
-		<PublicLayout data-organization={organization}>{children}</PublicLayout>
-	)
+	) : Object.keys(o).length > 0 ? (
+		<PublicLayout data-organization={o}>{children}</PublicLayout>
+	) : null
 }
