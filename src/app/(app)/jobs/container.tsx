@@ -58,10 +58,10 @@ export default function JobsPageContainer(p: {data: any[]}) {
                     {isLoading && <Spinner className='size-4 fill-lime-400 absolute -translate-y-1/2 top-1/2 right-2' />}
                 </InputGroup>
 
-                <DialogButton icon={<UserPlusIcon />} label='Create job order' onClick={(e) => {
+                {/* <DialogButton icon={<UserPlusIcon />} label='Create job order' onClick={(e) => {
                     setIsOpen(true)
                 }}>
-                </DialogButton>
+                </DialogButton> */}
 			</div>
             <List data={data} />
             <CreateJobOrderForm data-show={isOpen} onSuccess={record => setData([record, ...data])} closeListener={() => setIsOpen(false)} />
