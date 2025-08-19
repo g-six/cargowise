@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
-    if (!body.shipment) {
+    if (!body.job) {
         return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
     } else {
         // Process the valid webhook payload
         console.log("Received valid webhook:", body);
-        const { shipment, ...data } = body;
-        let record = await getShipment(shipment);
+        const { job, shipment, ...data } = body;
+        let record = await getShipment(shipment || job);
 
         if (!record) {
             const newRecord = await createShipment(body);
