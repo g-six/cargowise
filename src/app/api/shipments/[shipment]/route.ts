@@ -1,4 +1,4 @@
-import { createShipment, getShipment } from '@/services/shipments'
+import { getShipment } from '@/services/shipments'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {

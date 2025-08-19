@@ -12,7 +12,12 @@ export async function POST(request: NextRequest) {
         let record = await getShipment(shipment);
 
         if (!record) {
-            record = await createShipment(body);
+            const newRecord = await createShipment(body);
+            if (!newRecord.error) {
+                record = newRecord;
+            } else {
+                return NextResponse.json({ error: newRecord.details || newRecord.message }, { status: 400 });
+            }
         } else if (data.latitude || data.longitude || data.status) {
             record = await updateShipment(shipment, data);
         }

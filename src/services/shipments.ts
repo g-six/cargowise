@@ -46,7 +46,9 @@ export async function createShipment(data :{
 	const { data: record, error } = await supabase.from('shipment_jobs').insert(data).select('*').single()
 	if (error) {
 		console.warn('Error creating shipment:', error)
-		return
+		return {
+            error
+        }
 	}
 
 	return record
