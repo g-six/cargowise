@@ -1,5 +1,6 @@
 @import 'tailwindcss';
-@source inline("row-span-2", "row-span-3", "row-span-4", "row-span-5");
+@source inline("row-span-2", "row-span-3", "row-span-4", "row-span-5", "row-span-7", "row-span-8", "row-span-9", "row-span-10");
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: Inter, sans-serif;

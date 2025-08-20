@@ -27,21 +27,39 @@ export default function PlanSelector({
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+                name: data.organization,
+                phone: data.phone,
+                email: data.email,
+            }),
         })
 
         if (!response.ok) {
             console.error('Failed to create organization:', response.statusText)
             return null
         }
-
-        return response.json()
+        
+        const organization = await response.json()
+        
+        if (organization.slug) {
+            const teamResponse = await fetch('/api/teams', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...data,
+                    name: data.team,
+                    organization: organization.slug,
+                }),
+            })
+        } else console.warn('Unable to sign up', { organization })
     }
 
 	return (
 		<>
 			<Button
-				className="max-lg:w-full"
+				className="lg:hidden w-1/2"
 				color={(color as any) || 'rose'}
 				onClick={() => {
 					toggleForm(true)
@@ -56,19 +74,19 @@ export default function PlanSelector({
 					<div className="my-6 flex flex-col gap-y-6">
 						{price.unit.toLowerCase().includes('team') ? (
 							<div className={`grid-cols-4 space-y-6 sm:grid sm:space-x-2 ${step == 1 ? 'block' : 'hidden'}`}>
-								<Field className="col-span-2">
+								<Field className='col-span-4'>
 									<Label>Organization name</Label>
-									<Input type="text" placeholder="PF Academy" name="organization" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
+									<Input type="text" placeholder="Enter academy / club name" name="organization" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
-								<Field className="col-span-2">
+								<Field className="col-span-3">
 									<Label>Team name</Label>
-									<Input type="text" placeholder="Athletic Club" name="team" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
+									<Input type="text" placeholder="Enter team name" name="team" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 
-								<Field>
+								<Field className='col-span-1'>
 									<Label>Birth Year</Label>
-									<Select name="year" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))}>
+									<Select name="year_group" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))}>
 										{Array.from({ length: price.min_year - price.max_year }, (_, i) => {
 											const year = price.max_year + i
 											return (
@@ -94,7 +112,7 @@ export default function PlanSelector({
 
 								<Field>
 									<Label>Date of Birth</Label>
-									<Input type="date" name="dob" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
+									<Input type="date" name="date_of_birth" onChange={e => setPayload(prev => ({ ...prev, [e.target.name]: e.target.value }))} />
 								</Field>
 							</div>
 						)}
@@ -149,7 +167,7 @@ export default function PlanSelector({
 						color={color as any}
 						onClick={() => {
                             const { email, phone } = payload
-                            createOrganization({ email, phone, name: payload.organization }).then(console.log).catch(console.warn)
+                            createOrganization(payload).then(console.log).catch(console.warn)
 						}}
                         className='max-lg:hidden'
 					>

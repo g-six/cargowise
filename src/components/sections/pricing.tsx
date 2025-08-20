@@ -118,7 +118,7 @@ export default function PricingSection() {
 							aria-describedby={tier.id}
 							className={classNames(
 								tier.featured
-									? 'bg-indigo-500 text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500 dark:shadow-none'
+									? 'bg-indigo-500 dark:text-white text-black shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500 dark:shadow-none'
 									: 'text-indigo-600 inset-ring inset-ring-indigo-200 hover:inset-ring-indigo-300 focus-visible:outline-indigo-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:inset-ring-white/5 dark:focus-visible:outline-white/75',
 								'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
 							)}

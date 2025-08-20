@@ -1,7 +1,9 @@
+import { hashToken } from '@/utils/cryptography';
 import supabase from '@/utils/supabase/client';
+import { sendTextMessage } from './open-phone';
 
 export async function getUser(id: string) {
-    const { data, error } = await supabase.from('users').select('*').eq('id', id).single()
+    const { data, error } = await supabase.auth.admin.getUserById(id);
     if (error) {
         console.warn('Error fetching user:', error)
         return null
@@ -9,14 +11,19 @@ export async function getUser(id: string) {
     return data
 }
 
-export async function createUser(email: string, password: string) {
-    const { data, error } = await supabase.auth.signUp({
+export async function createUser(email: string, password: string, phone: string) {
+    const hashed_password = await hashToken(password);
+
+    const { data, error } = await supabase.from('users').insert({
         email,
-        password
-    })
+        hashed_password,
+        phone,
+    }).select('*').single();
     if (error) {
         console.warn('Error creating user:', error)
         return null
+    } else {
+        await sendTextMessage(phone, `Your account has been created successfully!\n Your password is: ${password}`)
     }
     return data
 }

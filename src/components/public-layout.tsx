@@ -68,7 +68,7 @@ export function PublicLayout({
     }, [organizationData])
 
 	return (
-		<div className="bg-white dark:bg-gray-900" id="public-layout">
+		<div className="bg-zinc-400 dark:bg-gray-900" id="public-layout">
 			{/* Header */}
 			<header className="absolute inset-x-0 top-0 z-50">
 				<nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
@@ -76,7 +76,7 @@ export function PublicLayout({
 						<a href="#" className="-m-1.5 p-1.5 flex items-center gap-1">
 							<span className="sr-only">{organization.name}</span>
 							{organization.logo ? <Image src={organization.logo} alt={organization.name} width={24} height={24} className="" /> : <Logo className='size-12' />}
-                            {organization.name ? <span className='text-sm text-white font-bold uppercase text-pretty'>{organization.name}</span> : null}
+                            {organization.name ? <span className='text-sm dark:text-white font-bold uppercase text-pretty'>{organization.name}</span> : null}
 						</a>
 					</div>
 					<div className="flex lg:hidden">
