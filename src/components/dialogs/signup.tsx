@@ -39,7 +39,7 @@ export function SignupForm(p: {
                         <Legend>Player information</Legend>
 						<Text>Enter the details of the player below.</Text>
 						<FieldGroup>
-							<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-4">
+							<div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-4">
 								<Field>
 									<Label>First name</Label>
 									<Input name="player_first_name" onChange={e => setPayload({ ...payload, [e.target.name]: e.target.value })} />
