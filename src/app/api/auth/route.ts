@@ -26,17 +26,16 @@ export async function GET(request: NextRequest) {
 	if (!user) {
 		return NextResponse.json(
 			{
-				message: 'Session found',
-				...safe,
+				message: 'Incorrect credentials',
 			},
-			{ status: 200 }
+			{ status: 401 }
 		)
 	}
 
 	return NextResponse.json(
 		{
 			message: 'Session found',
-			user,
+			user: safe,
 		},
 		{ status: 200 }
 	)
