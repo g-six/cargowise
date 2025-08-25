@@ -8,6 +8,7 @@ import { NavbarItem } from './navbar'
 import Image from 'next/image'
 import { Logo } from '@/app/logo'
 import Link from 'next/link'
+import { SigninForm } from './dialogs/signin'
 const navigation = [
 	{ name: 'Product', href: '#' },
 	{ name: 'Features', href: '#' },
@@ -94,9 +95,7 @@ export function PublicLayout({
 						))}
 					</div>
 					<div className="hidden lg:flex lg:flex-1 lg:justify-end">
-						<a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
-							View Schedule <span aria-hidden="true">&rarr;</span>
-						</a>
+						<SigninForm data-organization={organization as any} label="Sign in" />
 					</div>
 				</nav>
 				<Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">

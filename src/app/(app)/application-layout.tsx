@@ -73,39 +73,38 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		jwt: string = localStorage.getItem('access_token') || '',
 		refresh_token: string = localStorage.getItem('refresh_token') || ''
 	) {
-		if (!jwt) {
-			await fetch('/api/domains/' + window.location.hostname)
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error('Failed to fetch domain organization')
-					}
-					return response.json()
-				})
-				.then((domain) => {
-					if (domain) {
-						for (const key in domain) {
-							if (domain[key]) {
-								localStorage.setItem(key, typeof domain[key] === 'object' ? JSON.stringify(domain[key]) : domain[key])
-							} else {
-								localStorage.removeItem(key)
-							}
-						}
-						setNav((prev) => [
-							{
-								label: domain.name || 'Domain',
-								url: '/domains/' + domain.domain,
-								Icon: domain.logo ? (
-									<Image alt={domain.name} src={domain.logo} width={16} height={16} />
-								) : (
-									<Logo className="size-4" />
-								),
-							},
-							...prev.slice(1),
-						])
-						setOrganization(domain)
-					}
-				})
-		}
+        await fetch('/api/domains/' + window.location.hostname)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch domain organization')
+                }
+                return response.json()
+            })
+            .then((domain) => {
+                if (domain) {
+                    for (const key in domain) {
+                        if (domain[key]) {
+                            localStorage.setItem(key, typeof domain[key] === 'object' ? JSON.stringify(domain[key]) : domain[key])
+                        } else {
+                            localStorage.removeItem(key)
+                        }
+                    }
+                    setNav((prev) => [
+                        {
+                            label: domain.name || 'Domain',
+                            url: '/domains/' + domain.domain,
+                            Icon: domain.logo ? (
+                                <Image alt={domain.name} src={domain.logo} width={16} height={16} />
+                            ) : (
+                                <Logo className="size-4" />
+                            ),
+                        },
+                        ...prev.slice(1),
+                    ])
+                    setOrganization(domain)
+                }
+            })
+		
 		const response = await fetch('/api/auth', {
 			headers: {
 				Authorization: `Bearer ${jwt}`,
@@ -158,7 +157,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		}
 		setData(toStore)
 	}, [])
-    
+    console.log({o, data})
 	return data?.access_token ? (
 		<SidebarLayout
 			navbar={

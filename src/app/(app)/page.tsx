@@ -19,16 +19,14 @@ export default async function Home() {
     if (host) {
         const organization = await getDomainOrganization(host)
         if (organization) {
-            if (organization.slug !== 'cargowise') {
-                return <>
-                    <HeroSection data-organization={organization} />
-                    {/* <FeatureSection /> */}
-                    {/* <TestimonialSection /> */}
-                    {/* <PricingSection /> */}
-                    <FaqSection />
-                    <FooterSection data-organization={organization} />
-                </>
-            }
+            return <>
+                <HeroSection data-organization={organization} />
+                {/* <FeatureSection /> */}
+                {/* <TestimonialSection /> */}
+                {/* <PricingSection /> */}
+                <FaqSection />
+                <FooterSection data-organization={organization} />
+            </>
         }
     }
 
