@@ -159,7 +159,7 @@ export function ApplicationLayout({ children }: { children: React.ReactNode }) {
 		setData(toStore)
 	}, [])
     
-	return data?.access_token || o.organization === 'cargowise' ? (
+	return data?.access_token ? (
 		<SidebarLayout
 			navbar={
 				<Navbar>

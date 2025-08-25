@@ -19,10 +19,14 @@ import { useEffect, useState } from 'react';
 
 export default function Form({
 	'data-theme': theme,
+	'data-current-season': currentSeason,
 	organization,
 }: {
 	'data-theme'?: 'light' | 'dark';
 	organization?: any;
+	'data-current-season'?: Database['public']['Tables']['seasons']['Row'] & {
+		season_programs: Database['public']['Tables']['season_programs']['Row'][];
+	};
 }) {
 	const searchParams = useSearchParams();
 	const [lname, fname] = (searchParams.get('name') || '').split(', ').filter(Boolean);
@@ -51,7 +55,7 @@ export default function Form({
 				setStep={setStep}
 				data-show={step === 0}
 				data-form={formData}
-				organization={organization}
+				data-current-season={currentSeason}
 			/>
 
 			<ParentInformationSection
@@ -160,21 +164,20 @@ export function PlanGrid({
 	'data-form': formData,
 	'data-show': show,
 	setStep,
-	organization,
+	'data-current-season': currentSeason,
 }: {
 	'data-form': Record<string, any>;
 	'data-show': boolean;
-	organization: Record<string, any>;
+	'data-current-season'?: Database['public']['Tables']['seasons']['Row'] & {
+		season_programs: Database['public']['Tables']['season_programs']['Row'][];
+	};
 	setFormData: (data: Record<string, any>) => void;
 	setStep: (step: number) => void;
 }) {
-    const { league } = organization as { league: Record<string, any> };
-    const { league_pricing } = league as { league_pricing?: Record<string, any>[] };
-	if (!organization || !league_pricing) return <></>;
-
+	if (!currentSeason || !currentSeason.season_programs || !currentSeason.season_programs.length) return <></>;
 	return (
 		<div role="list" className="my-8 grid grid-cols-1 gap-y-8 lg:mt-0" id="begin">
-			{league_pricing.map((option: Record<string, any>) => (
+			{currentSeason.season_programs.map((option) => (
 				<div
 					key={option.name}
 					className={`${formData.plan === option.name ? 'flex' : formData.plan ? 'hidden' : 'flex'} flex-col justify-between overflow-hidden sm:mb-0 sm:mb-12 sm:rounded-xl sm:outline -outline-offset-1 outline-white/10`}
@@ -195,7 +198,7 @@ export function PlanGrid({
 							className={`flex-1 flex-col items-center justify-between gap-x-4 py-3 sm:items-start ${show ? 'flex' : 'hidden sm:flex'}`}
 						>
 							<dt className="sr-only">Description</dt>
-							{option.description?.split('\n').map((line: string, index: number) => (
+							{option.description?.split('\n').map((line, index) => (
 								<dd key={index} className="mb-2 text-center leading-4 sm:text-left text-gray-300">
 									{line}
 								</dd>

@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { Button } from "../button"
+import { Text } from "../text"
+import { Heading } from "../heading"
+import { SignupForm } from "../dialogs/signup"
 
 export default function HeroSection(p: {
     'data-organization': Record<string, any>
@@ -21,7 +24,7 @@ export default function HeroSection(p: {
 				/>
 			</div>
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
-				<div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+				<div className="mx-auto max-w-2xl py-32 sm:pt-48 lg:pt-56">
 					{Boolean(p["data-organization"]?.announcements?.length) && <div className="hidden sm:mb-8 sm:flex sm:justify-center">
 						<div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
 							{p["data-organization"]?.announcements[0].contents}{' '}
@@ -32,106 +35,31 @@ export default function HeroSection(p: {
 						</div>
 					</div>}
 					<div className="text-center">
-                        {`${p["data-organization"].hero_title || 'Welcome to CargoWise'}`.split('\n').map((line, index) => (
-                            <h1 key={index} className="text-3xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl dark:text-white text-pretty">
+                        {`${p["data-organization"].hero_title || 'Welcome to ClubAthletix'}`.split('\n').map((line, index) => (
+                            <Heading key={index} level={2} className="text-3xl! sm:text-4xl!">
                                 {line}
-                            </h1>
+                            </Heading>
 						))}
-						<p className="mt-8 text-lg font-medium text-pretty text-gray-600 sm:text-xl/8 dark:text-gray-400">
-							Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat
-							veniam occaecat.
-						</p>
+						<Text className="mt-8 text-xl!">
+							Our program is designed to give youth players more opportunities to train and play in a supportive and competitive environment.
+						</Text>
 						<div className="mt-10 flex items-center justify-center gap-x-6">
-							<Button
-								href="#"
-								color={p["data-organization"]?.theme.brand}
-							>
-								Get started
-							</Button>
-							<a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
-								Learn more <span aria-hidden="true">→</span>
-							</a>
+							<SignupForm data-organization={p["data-organization"] as any} />
 						</div>
 					</div>
 				</div>
 
 				{/* Logo cloud */}
-				<div className="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-					<img
-						alt="Transistor"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-gray-900.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain lg:col-span-1 dark:hidden"
-					/>
-					<img
-						alt="Transistor"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-white.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain not-dark:hidden lg:col-span-1"
-					/>
-
-					<img
-						alt="Reform"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/reform-logo-gray-900.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain lg:col-span-1 dark:hidden"
-					/>
-					<img
-						alt="Reform"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/reform-logo-white.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain not-dark:hidden lg:col-span-1"
-					/>
-
-					<img
-						alt="Tuple"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/tuple-logo-gray-900.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain lg:col-span-1 dark:hidden"
-					/>
-					<img
-						alt="Tuple"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/tuple-logo-white.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain not-dark:hidden lg:col-span-1"
-					/>
-
-					<img
-						alt="SavvyCal"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/savvycal-logo-gray-900.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1 dark:hidden"
-					/>
-					<img
-						alt="SavvyCal"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/savvycal-logo-white.svg"
-						width={158}
-						height={48}
-						className="col-span-2 max-h-12 w-full object-contain not-dark:hidden sm:col-start-2 lg:col-span-1"
-					/>
-
-					<img
-						alt="Statamic"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/statamic-logo-gray-900.svg"
-						width={158}
-						height={48}
-						className="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1 dark:hidden"
-					/>
-					<img
-						alt="Statamic"
-						src="https://tailwindcss.com/plus-assets/img/logos/158x48/statamic-logo-white.svg"
-						width={158}
-						height={48}
-						className="col-span-2 col-start-2 max-h-12 w-full object-contain not-dark:hidden sm:col-start-auto lg:col-span-1"
-					/>
-				</div>
+                {/* <Text className="mx-auto text-center">Leagues we play in</Text>
+                <Link href='https://thepdsl.ca'>
+                    <img
+                        alt="PDSL+"
+                        src="https://viplaril6wogm0dr.public.blob.vercel-storage.com/clubathletix/pdsl/pdsl.png"
+                        width={192}
+                        height={192}
+                        className="max-h-36 w-full object-contain"
+                    />
+                </Link> */}
 			</div>
 			<div
 				aria-hidden="true"

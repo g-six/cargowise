@@ -8,7 +8,7 @@ export async function getDomainOrganization(domain: string) {
 	}
     const { organizations: { organization_themes: theme, addresses: address, ...organization }, ...d } = data
     if (organization?.slug) {
-        const announcements = await supabase.from('announcements').select('*').eq('organization', organization.slug).order('created_at', { ascending: false }).limit(2)
+        const announcements = await supabase.from('announcements').select('*').eq('organization', organization.slug).is('active', true).order('created_at', { ascending: false }).limit(2)
         organization.announcements = announcements.data || []
     }
 	return {

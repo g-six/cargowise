@@ -8,8 +8,6 @@ import { NavbarItem } from './navbar'
 import Image from 'next/image'
 import { Logo } from '@/app/logo'
 import Link from 'next/link'
-import { Heading, Subheading } from './heading'
-import { TextLink } from './text'
 const navigation = [
 	{ name: 'Product', href: '#' },
 	{ name: 'Features', href: '#' },
@@ -62,7 +60,6 @@ export function PublicLayout({
 }: React.PropsWithChildren<{ 'data-organization': Record<string, any> }>) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 	const [organization, setOrganization] = useState(organizationData)
-
     useEffect(() => {
         setOrganization(organizationData)
     }, [organizationData])
@@ -71,7 +68,7 @@ export function PublicLayout({
 		<div className="bg-zinc-400 dark:bg-gray-900" id="public-layout">
 			{/* Header */}
 			<header className="absolute inset-x-0 top-0 z-50">
-				<nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
+				<nav aria-label="Global" className="mx-auto container flex items-center justify-between p-6 lg:px-8">
 					<div className="flex lg:flex-1">
 						<a href="#" className="-m-1.5 p-1.5 flex items-center gap-1">
 							<span className="sr-only">{organization.name}</span>
@@ -98,7 +95,7 @@ export function PublicLayout({
 					</div>
 					<div className="hidden lg:flex lg:flex-1 lg:justify-end">
 						<a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
-							Log in <span aria-hidden="true">&rarr;</span>
+							View Schedule <span aria-hidden="true">&rarr;</span>
 						</a>
 					</div>
 				</nav>
@@ -122,13 +119,13 @@ export function PublicLayout({
 						<div className="mt-6 flow-root">
 							<div className="-my-6 divide-y divide-gray-500/10 dark:divide-gray-500/25">
 								<div className="space-y-2 py-6">
-									{navigation.map((item) => (
+									{Object.keys(organization.sitemap || {}).map((item) => (
 										<a
-											key={item.name}
-											href={item.href}
+											key={item}
+											href={organization.sitemap[item]}
 											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
 										>
-											{item.name}
+											{item}
 										</a>
 									))}
 								</div>
@@ -137,7 +134,7 @@ export function PublicLayout({
 										href="#"
 										className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5"
 									>
-										Log in
+										View Schedule
 									</a>
 								</div>
 							</div>

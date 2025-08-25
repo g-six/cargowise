@@ -3,34 +3,34 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
 const faqs = [
   {
-    question: "What's the best thing about Switzerland?",
+    question: "How often are matches?",
     answer:
-      "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+      "Most games are scheduled on weekends. You’ll receive exact times/venues after registering interest.",
   },
   {
-    question: 'How do you make holy water?',
+    question: 'What ages and levels are accepted?',
     answer:
-      'You boil the hell out of it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam aut tempora vitae odio inventore fuga aliquam nostrum quod porro. Delectus quia facere id sequi expedita natus.',
+      'We accept players aged 6-17. Tailored for beginners to advanced players - all skill levels are welcome!',
   },
   {
-    question: 'What do you call someone with no body and no nose?',
+    question: 'Which league should my child join?',
     answer:
-      'Nobody knows. Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa, voluptas ipsa quia excepturi, quibusdam natus exercitationem sapiente tempore labore voluptatem.',
+      'Start with PDSL for beginners/recreational. If your player has strong fundamentals, is physically ahead of their peers, and wants more challenge, PDSL+ is ideal.',
   },
   {
-    question: 'Why do you never see elephants hiding in trees?',
+    question: 'I already belong to another league. Can I still join?',
     answer:
-      "Because they're so good at it. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+      "Yes! We welcome players from all leagues and our schedule is flexible.",
   },
   {
-    question: "Why can't you hear a pterodactyl go to the bathroom?",
+    question: "How many teams do you compete against?",
     answer:
-      'Because the pee is silent. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam, quas voluptatibus ex culpa ipsum, aspernatur blanditiis fugiat ullam magnam suscipit deserunt illum natus facilis atque vero consequatur! Quisquam, debitis error.',
+      'We typically compete against 3-5 teams per age group and level in our league. This allows for a balanced schedule and plenty of playing time for all participants.',
   },
   {
-    question: 'Why did the invisible man turn down the job offer?',
+    question: "Where do you train?",
     answer:
-      "He couldn't see himself doing it. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eveniet perspiciatis officiis corrupti tenetur. Temporibus ut voluptatibus, perferendis sed unde rerum deserunt eius.",
+      'We train at various locations depending on the age group and level. Our primary location is at Cambridge Elementary.',
   },
 ]
 

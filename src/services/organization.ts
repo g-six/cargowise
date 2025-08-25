@@ -41,3 +41,25 @@ export async function createOrganizationIfNotFound(data: {
 
 	return await createOrganization(data)
 }
+
+export async function getOrganizationByDomain(domain: string) {
+    const { data, error } = await supabase
+        .from('domains')
+        .select('organizations(*, leagues(*, league_pricing(*)))')
+        .ilike('domain', domain)
+        .single()
+
+    if (error) {
+        console.warn('Error fetching organization by domain:', error)
+        return null
+    }
+
+    const {leagues, ...organization} = data.organizations as Record<string, any>
+
+    const league = (leagues?.[0] || {}) as Record<string, any>
+
+    return {
+        ...organization,
+        league,
+    }
+}

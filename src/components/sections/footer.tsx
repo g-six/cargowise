@@ -1,63 +1,32 @@
+import { Logo } from "@/app/logo"
+import Image from "next/image";
+import { PrivacyPolicyDialog } from "../dialogs/privacy-policy";
+
 const footerNavigation = {
-  solutions: [
-    { name: 'Marketing', href: '#' },
-    { name: 'Analytics', href: '#' },
-    { name: 'Automation', href: '#' },
-    { name: 'Commerce', href: '#' },
-    { name: 'Insights', href: '#' },
-  ],
-  support: [
-    { name: 'Submit ticket', href: '#' },
-    { name: 'Documentation', href: '#' },
-    { name: 'Guides', href: '#' },
-  ],
-  company: [
-    { name: 'About', href: '#' },
-    { name: 'Blog', href: '#' },
-    { name: 'Jobs', href: '#' },
-    { name: 'Press', href: '#' },
-  ],
-  legal: [
-    { name: 'Terms of service', href: '#' },
-    { name: 'Privacy policy', href: '#' },
-    { name: 'License', href: '#' },
+  parents: [
+    { name: 'Parents Guide', href: '/parents' },
   ],
 }
-export default function FooterSection() {
+export default function FooterSection(p: { 'data-organization': { logo: string; name: string } }) {
     return <footer className="mt-32 sm:mt-56">
         <div className="mx-auto max-w-7xl border-t border-gray-200 px-6 py-16 sm:py-24 lg:px-8 lg:py-32 dark:border-white/10">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-            <img
-              alt="Company name"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-              className="h-9 dark:hidden"
-            />
-            <img
-              alt="Company name"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-              className="h-9 not-dark:hidden"
-            />
-            <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+            <div className="flex">
+                {p['data-organization'].logo ? <Image src={p['data-organization'].logo} alt={p['data-organization'].name} width={128} height={128} className="h-24 w-24 max-sm:hidden" /> : <Logo className='size-12' />}
+                <img
+                    alt="PDSL+"
+                    src="https://viplaril6wogm0dr.public.blob.vercel-storage.com/clubathletix/pdsl/pdsl.png"
+                    width={192}
+                    height={192}
+                    className="max-h-24 w-full object-contain"
+                />
+            </div>
+            <div className="mt-16 sm:grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
               <div className="md:grid md:grid-cols-2 md:gap-8">
-                <div>
-                  <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Solutions</h3>
-                  <ul role="list" className="mt-6 space-y-4">
-                    {footerNavigation.solutions.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
                 <div className="mt-10 md:mt-0">
-                  <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Support</h3>
+                  <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Parent Resources</h3>
                   <ul role="list" className="mt-6 space-y-4">
-                    {footerNavigation.support.map((item) => (
+                    {footerNavigation.parents.map((item) => (
                       <li key={item.name}>
                         <a
                           href={item.href}
@@ -67,38 +36,7 @@ export default function FooterSection() {
                         </a>
                       </li>
                     ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="md:grid md:grid-cols-2 md:gap-8">
-                <div>
-                  <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Company</h3>
-                  <ul role="list" className="mt-6 space-y-4">
-                    {footerNavigation.company.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mt-10 md:mt-0">
-                  <h3 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Legal</h3>
-                  <ul role="list" className="mt-6 space-y-4">
-                    {footerNavigation.legal.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
+                        <li><PrivacyPolicyDialog data-organization={p['data-organization']} className="text-sm/6 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white cursor-pointer" /></li>
                   </ul>
                 </div>
               </div>
