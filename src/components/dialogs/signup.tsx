@@ -39,7 +39,7 @@ export function SignupForm(p: {
                         <Legend>Player information</Legend>
 						<Text>Enter the details of the player below.</Text>
 						<FieldGroup>
-							<div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-4">
+							<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-4">
 								<Field>
 									<Label>First name</Label>
 									<Input name="player_first_name" onChange={e => setPayload({ ...payload, [e.target.name]: e.target.value })} />
@@ -52,7 +52,7 @@ export function SignupForm(p: {
 									<Label>Date of birth</Label>
 									<Input name="date_of_birth" type='date' onChange={e => setPayload({ ...payload, [e.target.name]: e.target.value })} />
 								</Field>
-                                <Field className='col-span-2 pt-6'>
+                                <Field className='sm:col-span-2 pt-6'>
                                     <Label>Tell us a bit about the player&rsquo;s experience (optional)</Label>
                                     <Description>If you think it would help us understand the player better and the level they are at, please share any relevant details.</Description>
                                     <Textarea name="player_notes" onChange={e => setPayload({ ...payload, [e.target.name]: e.target.value })} />
