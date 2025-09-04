@@ -3,11 +3,10 @@ import { Button } from '@/components/button'
 import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
 import { Description, Field, FieldGroup, Fieldset, Label, Legend } from '@/components/fieldset'
 import { Input } from '@/components/input'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Text } from '../text'
 import { Textarea } from '../textarea'
-import { sub } from 'framer-motion/client'
-import { encrypt } from '@/utils/cryptography'
+import { fetchData } from '@/utils/api'
 
 type SignupState = 'Sign us up' | 'Signing up...' | 'Player information' | 'Parent/guardian information'
 
@@ -30,19 +29,16 @@ export function SignupForm(p: {
 			if (direction === -1) setSubmitAction('Player information')
 			else {
                 setSubmitAction('Signing up...')
-                fetch('/api/auth', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                }).then(res => res.json()).then(d => {
+                fetchData('/api/auth', 'POST', payload).then(d => {
                     const { access_token, record } = d;
                     if (access_token) {
                         localStorage.setItem('access_token', access_token);
                         localStorage.setItem('email', record.email);
                         localStorage.setItem('first_name', record.first_name);
                         localStorage.setItem('phone', record.phone);
+                        setTimeout(() => {
+                            location.href = '/my';
+                        }, 200)
                     } else {
                         alert(d.message || 'An error occurred. Please try again.')
                     }

@@ -1,8 +1,8 @@
 import Link from "next/link"
-import { Button } from "../button"
 import { Text } from "../text"
 import { Heading } from "../heading"
 import { SignupForm } from "../dialogs/signup"
+import { OrganizationSignupForm } from "../dialogs/organization-signup"
 
 export default function HeroSection(p: {
     'data-organization': Record<string, any>
@@ -41,10 +41,14 @@ export default function HeroSection(p: {
                             </Heading>
 						))}
 						<Text className="mt-8 text-xl!">
-							Our program is designed to give youth players more opportunities to train and play in a supportive and competitive environment.
+							{p["data-organization"]?.hero_subtitle || 'Join us today and take the first step towards achieving your athletic dreams.'}
 						</Text>
 						<div className="mt-10 flex items-center justify-center gap-x-6">
-							<SignupForm data-organization={p["data-organization"] as any} />
+							{p["data-organization"]?.has_registration ? (
+								<SignupForm data-organization={p["data-organization"] as any} />
+							) : (
+								<OrganizationSignupForm data-organization={p["data-organization"] as any} />
+							)}
 						</div>
 					</div>
 				</div>

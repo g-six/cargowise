@@ -1,6 +1,5 @@
 'use client'
 import { Heading } from '@/components/heading'
-import { CreateJobOrderForm } from './form'
 import List from './list'
 import { useEffect, useState } from 'react';
 import { DialogButton } from '@/components/dialog';
@@ -64,7 +63,6 @@ export default function JobsPageContainer(p: {data: any[]}) {
                 </DialogButton> */}
 			</div>
             <List data={data} />
-            <CreateJobOrderForm data-show={isOpen} onSuccess={record => setData([record, ...data])} closeListener={() => setIsOpen(false)} />
 		</>
 	)
 }

@@ -1,9 +1,13 @@
-import { compareToken, hashToken } from '@/utils/cryptography'
+import { Team, TeamAthlete } from '@/data'
+import { getOrganizationByDomain } from '@/services/organization'
+import { compareToken, encrypt, hashToken } from '@/utils/cryptography'
 import supabase from '@/utils/supabase/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
-	const jwt = request.headers.get('Authorization')
+    const host = request.headers.get('x-domain') || request.headers.get('host')?.split(':')?.[0] || ''
+    const organization = await getOrganizationByDomain(host)
+    const jwt = request.headers.get('Authorization')
 	if (!jwt || !jwt.startsWith('Bearer ')) {
 		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
 	}
@@ -11,15 +15,79 @@ export async function GET(request: NextRequest) {
 	const [, access_token] = jwt.split(' ')
 
 	const {
-		data: { users: user },
-		error,
-	} = await supabase.from('sessions').select('*, users(*)').eq('access_token', access_token).single()
-	let metadata = user?.user_metadata
-	const safe: Record<string, string> = {
+		data,
+	} = await supabase.from('sessions').select('*, users(*, organization_members(*, athletes(*)), team_managers(teams(*, team_athletes(number, role, athlete(*)))))').eq('access_token', access_token).single()
+    if (!data?.users) 
+		return NextResponse.json(
+			{
+				message: 'Incorrect credentials',
+			},
+			{ status: 401 }
+		)
+    const { team_managers, ...user} = data.users
+
+    if (!organization) return NextResponse.json(
+			{
+				message: 'No organization found',
+			},
+			{ status: 401 }
+		)
+	const safe: Record<string, any> = {
 		access_token,
 	}
+
+    const { organization_managers } = organization
+    const athletes: Record<string, any>[] = []
+
+    if (organization_managers.find((om: Record<string, string>) => om.user === user.email)) {
+        const { data } = await supabase.from('athletes').select('*, team_athletes(teams(slug, name, year_group)), users(email, phone, first_name)').range(0, 99);
+
+        if (data?.length) athletes.push(...data.map(a => {
+            const { team_athletes, ...athlete } = a
+            return {
+                ...athlete,
+                teams: team_athletes?.map((ta: { teams: Team }) => ta.teams) || []
+            }
+        }));
+    } else if (user.organization_members?.length) {
+        for (const om of user.organization_members) {
+            if (om.athletes) {
+                const { team_athletes, ...a } = om.athletes
+                if (athletes.findIndex(at => at.slug === a.slug) === -1) {
+                    athletes.push({
+                        ...a,
+                        teams: team_athletes?.map((ta: { teams: Team }) => ta.teams) || []
+                    })
+                }
+            }
+        }
+
+    }
+
+    if (team_managers?.length) {
+        // User is managing teams
+        safe.teams = team_managers.map((tm: {
+            teams: (Team & {
+                team_athletes: TeamAthlete[]
+            })
+        }) => {
+            const { team_athletes, ...team } = tm.teams
+                const athletes = team_athletes?.map((ta: Record<string, any>) => ({
+                    role: ta.role,
+                    number: ta.number,
+                    ...ta.athlete
+                })) || []
+
+                return {
+                    ...team,
+                    athletes
+                }
+            
+        }).flat()
+    }
+
 	Object.keys(user).forEach((key) => {
-		if (!['hashed_password', 'temp_code'].includes(key)) {
+		if (!['hashed_password', 'temp_code', 'access_token'].includes(key)) {
 			safe[key] = user[key]
 		}
 	})
@@ -36,8 +104,10 @@ export async function GET(request: NextRequest) {
 		{
 			message: 'Session found',
 			user: safe,
+            organization,
+            athletes,
 		},
-		{ status: 200 }
+		{ status: 200, headers: { 'Set-Cookie': `access_token=${access_token}; Path=/; HttpOnly`, 'X-Access-Token': access_token } }
 	)
 
 	// Here you would typically fetch user data based on the session
@@ -49,18 +119,17 @@ export async function POST(request: NextRequest) {
 		guardian_first_name,
 		guardian_last_name,
 		email,
-		password,
 		phone,
 		street_address,
 		postal_code,
 		player_first_name,
 		player_last_name,
 		date_of_birth,
+        password,
 		player_notes,
 	} = await request.json()
 
 	const hashed_password = await hashToken(password)
-	const hashed_email = await hashToken(email)
 
 	if (!email || !password) {
 		return NextResponse.json({ message: 'Email and password are required' }, { status: 400 })
@@ -68,14 +137,14 @@ export async function POST(request: NextRequest) {
 
 	const { data: record, error } = await supabase
 		.from('users')
-		.insert({
+		.upsert({
 			email,
 			hashed_password,
 			phone,
 			first_name: guardian_first_name,
 			last_name: guardian_last_name,
-			street_address: street_address,
-			postal_code: postal_code,
+			street_address,
+			postal_code,
 		})
 		.select('*')
 		.single()
@@ -83,22 +152,32 @@ export async function POST(request: NextRequest) {
 	if (error) {
 		return NextResponse.json({ message: error.message }, { status: 400 })
 	} else if (record?.email) {
-		const access_token = `${hashed_email}.${hashed_password}`
+		const access_token = encrypt(email, password)
 		let slug = player_first_name.toLowerCase()
 		slug = slug + ' ' + player_last_name.toLowerCase()
 		slug = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-		slug = slug.trim().replace(/\s+/g, '-') + '-' + email.split('@').shift()
+		slug = slug.trim().replace(/\s+/g, '-')
 		slug = slug.toLowerCase()
-		await Promise.all([
+
+        const existing = await supabase.from('athletes').select('slug').eq('slug', slug).single()
+        if (existing.data) {
+            slug = slug + '-' + date_of_birth.slice(-2) + phone.slice(-2)
+        }
+		const [athleteResults] = await Promise.all([
 			supabase.from('athletes').insert({
 				slug,
-				user: email,
 				first_name: player_first_name,
 				last_name: player_last_name,
 				date_of_birth,
-			}),
+			}).select('slug').single(),
 			supabase.from('sessions').insert({ access_token, user: email }),
 		])
+
+        if (athleteResults.data?.slug) await supabase.from('organization_members').insert({
+            user: email,
+            athlete: athleteResults.data.slug,
+        });
+
 		return NextResponse.json(
 			{
 				message: 'User registered successfully',
@@ -120,9 +199,8 @@ export async function PUT(request: NextRequest) {
 
 		if (password_correct) {
 			// Only return selected fields, e.g. email and first_name
-			const [hashed_password, hashed_email] = await Promise.all([hashToken(password), hashToken(email)])
-			const access_token = `${hashed_email}.${hashed_password}`
-			await supabase.from('sessions').upsert({ access_token, user: email })
+			const access_token = encrypt(email, password)
+			await supabase.from('sessions').upsert({ access_token, user: email }, { onConflict: 'user', ignoreDuplicates: false })
 			const safe: Record<string, string> = {
 				access_token,
 			}

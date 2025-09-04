@@ -8,6 +8,7 @@ import { Text } from '../text'
 import { Textarea } from '../textarea'
 import { sub } from 'framer-motion/client'
 import { encrypt } from '@/utils/cryptography'
+import { fetchData } from '@/utils/api'
 
 type SignupState = 'Sign in' | 'Signing in...'
 
@@ -64,13 +65,7 @@ export function SigninForm(p: {
                         disabled={submitAction === 'Signing in...'}
                         onClick={() => {
                             setSubmitAction('Signing in...')
-                            fetch('/api/auth', {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify(payload)
-                            }).then(res => res.json()).then(d => {
+                            fetchData('/api/auth', 'PUT', payload).then(d => {
                                 const { user, message } = d as {
                                     user?: Record<string, string>
                                     message?: string
@@ -84,6 +79,10 @@ export function SigninForm(p: {
                                         }
                                     }
                                     // Handle successful sign-in
+
+                                    setTimeout(() => {
+                                        location.href = '/my'
+                                    }, 200)
                                 } else {
                                     // Handle sign-in error
                                 }

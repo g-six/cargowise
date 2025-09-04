@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import Spinner from '@/components/spinners'
 import { ArrowDownOnSquareIcon } from '@heroicons/react/16/solid'
 
-export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show }: { toggle?(v: boolean): void, 'data-show'?: boolean; onSuccess?(record: any): void; closeListener?(): void }) {
+export function CreateScheduleForm({ closeListener, onSuccess, 'data-show': show }: { toggle?(v: boolean): void, 'data-show'?: boolean; onSuccess?(record: any): void; closeListener?(): void }) {
     const [isOpen, setIsOpen] = useState(show);
     const [errorMessage, setErrorMessage] = useState('');
     const [payload, setPayload] = useState({
@@ -16,7 +16,7 @@ export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show
     })
     const [isLoading, setIsLoading] = useState(false)
 
-    function createJobOrder() {
+    function createSchedule() {
         if (payload.job && payload.shipment) {
             setIsLoading(true);
             fetch('/api/jobs', {
@@ -62,7 +62,7 @@ export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show
                     <Label>Job #</Label>
                     <Input name="job" defaultValue={payload.job} onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })} onKeyUp={e => {
                         if (e.key === 'Enter') {
-                            createJobOrder()
+                            createSchedule()
                         }
                     }} />
                 </Field>
@@ -71,7 +71,7 @@ export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show
                     <Label>Shipment #</Label>
                     <Input name="shipment" defaultValue={payload.shipment} onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })} onKeyUp={e => {
                         if (e.key === 'Enter') {
-                            createJobOrder()
+                            createSchedule()
                         }
                     }} />
                 </Field>
@@ -84,7 +84,7 @@ export function CreateJobOrderForm({ closeListener, onSuccess, 'data-show': show
                     Cancel
                 </Button>
                 <Button type="submit" color="lime" onClick={() => {
-                    createJobOrder()
+                    createSchedule()
                 }}>
                     Create {isLoading ? <Spinner className='size-3.5 fill-white/50' /> : <ArrowDownOnSquareIcon />}
                 </Button>

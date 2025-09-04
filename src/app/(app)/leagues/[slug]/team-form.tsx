@@ -29,11 +29,12 @@ export function TeamRegistrationForm() {
                         <Field>
                             <Label>Age Group</Label>
                             <Select name="age_group" onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })}>
-                                <option value={2010}>U15</option>
-                                <option value={2013}>U13</option>
+                                <option value={2010}>U16</option>
+                                <option value={2012}>U14</option>
+                                <option value={2014}>U12</option>
                                 <option value={2016}>U10</option>
                                 <option value={2018}>U8</option>
-                                <option value={2019}>U7</option>
+                                <option value={2020}>U6</option>
                             </Select>
                         </Field>
                     </div>

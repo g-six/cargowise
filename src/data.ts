@@ -930,3 +930,31 @@ export function getCountries() {
     },
   ]
 }
+
+export type Athlete = {
+    slug: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    photo_url: string;
+}
+export type TeamAthlete = {
+    role: 'S' | 'CB' | 'WB' | 'M' | 'W' | 'GK'
+    team: string;
+    number: number;
+} & Athlete
+
+export type InsertTeamAthlete = {
+    role?: 'S' | 'CB' | 'WB' | 'M' | 'W' | 'GK'
+    team?: string;
+    number?: number;
+} & Athlete
+
+export type Team = {
+    name: string;
+    slug: string;
+    age_group: string;
+    year_group: number;
+    organization: string;
+    athletes: TeamAthlete[];
+}
