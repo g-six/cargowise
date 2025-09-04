@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { Avatar } from "@/components/avatar"
 import { Subheading } from "@/components/heading"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/table"

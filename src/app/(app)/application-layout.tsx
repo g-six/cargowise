@@ -31,12 +31,12 @@ import {
 	ShieldCheckIcon,
 	UserCircleIcon,
 } from '@heroicons/react/16/solid'
-import { HomeIcon, UserGroupIcon } from '@heroicons/react/20/solid'
+import { CalendarDaysIcon, HomeIcon, UserGroupIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Logo } from '../logo'
 import { fetchData } from '@/utils/api'
-import AppContext, { useAppContext, useAppDispatch } from './context-provider'
+import AppContext from "@/app/(app)/context-provider"
 
 const navItems = [{ label: '...', url: '/', Icon: <Logo className="size-4" /> }]
 
@@ -190,8 +190,8 @@ export function ApplicationLayout({ children, "data-organization": organization 
 					<SidebarBody>
 						<SidebarSection>
 							<SidebarItem href="/my" current={pathname === '/my'}>
-								<HomeIcon />
-								<SidebarLabel>Home</SidebarLabel>
+								<CalendarDaysIcon />
+								<SidebarLabel>Dashboard</SidebarLabel>
 							</SidebarItem>
 							<SidebarItem href="/my/teams" current={pathname.startsWith('/my/team')}>
 								<UserGroupIcon />

@@ -1,13 +1,11 @@
 'use client'
 
-import { useContext, useEffect, useState } from "react"
-import { Avatar } from "@/components/avatar"
+import { useContext, useState } from "react"
 import { Subheading } from "@/components/heading"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/table"
 import { fetchData } from "@/utils/api"
-import { UserCircleIcon } from "@heroicons/react/20/solid"
-import { Team, TeamAthlete } from "@/data"
-import { Context, DispatchContext } from "../../context-provider"
+import { Team } from "@/data"
+import { Context, DispatchContext } from "@/app/(app)/context-provider"
 
 export default function TeamsTable() {
     const [loading, toggleLoading] = useState(false)

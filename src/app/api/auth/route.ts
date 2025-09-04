@@ -16,15 +16,15 @@ export async function GET(request: NextRequest) {
 
 	const {
 		data,
-	} = await supabase.from('sessions').select('*, users(*, organization_members(*, athletes(*)), team_managers(teams(*, team_athletes(number, role, athlete(*)))))').eq('access_token', access_token).single()
-    if (!data?.users) 
+	} = await supabase.from('sessions').select('*, user(*, athletes(slug, first_name, last_name, date_of_birth, team_attendance(*), team_athletes(team(slug, name, age_group, year_group))), organization_members(*, athletes(*)), team_managers(teams(*, team_athletes(number, role, athlete(*)))))').eq('access_token', access_token).single()
+    if (!data?.user) 
 		return NextResponse.json(
 			{
 				message: 'Incorrect credentials',
 			},
 			{ status: 401 }
 		)
-    const { team_managers, ...user} = data.users
+    const { team_managers, ...user} = data.user
 
     if (!organization) return NextResponse.json(
 			{
@@ -38,6 +38,45 @@ export async function GET(request: NextRequest) {
 
     const { organization_managers } = organization
     const athletes: Record<string, any>[] = []
+    const household_teams: string[] = []
+
+    if (user.athletes?.length)
+    for (const atx of user.athletes) {
+        const { team_athletes, team_attendance, ...athlete } = atx
+        // atx.teams = team_athletes?.map((ta: { teams: Team }) => ta.teams) || []
+        for (const ta of team_athletes || []) {
+            const { team_calendar, ...team } = ta.team;
+            const a = athletes.findIndex(at => at.slug === athlete.slug)
+            if (household_teams.indexOf(team.slug) === -1) household_teams.push(team.slug)
+            if (a !== -1) {
+                if (!athletes[a].teams) athletes[a].teams = []
+                if (athletes[a].teams.findIndex((t: Team) => t.slug === team.slug) === -1) {
+                    athletes[a].teams.push(team)
+                }
+            } else {
+                athletes.push({
+                    ...athlete,
+                    teams: [team],
+                })
+            }
+            for (const item of team_calendar || []) {
+                const { location, ...cal } = item
+                schedule.push({
+                    ...cal,
+                    date: new Date(`${item.start_date}T${item.start_time}`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' at'),
+                    location: location ? {
+                        ...location,
+                        address: `${location.street_1}${location.street_2 ? ', ' + location.street_2 : ''}`,
+                        city_town: location.city_town,
+                        postal_code: location.postal_code,
+                        country: location.country,
+                    } : null,
+                })
+            }
+        }
+    }
+
+    const { data: schedule } = await supabase.from('team_calendar').select('*, location(*)').in('team', household_teams).order('start_date', { ascending: true }).order('start_time', { ascending: true }).limit(20)
 
     if (organization_managers.find((om: Record<string, string>) => om.user === user.email)) {
         const { data } = await supabase.from('athletes').select('*, team_athletes(teams(slug, name, year_group)), users(email, phone, first_name)').range(0, 99);
@@ -61,7 +100,15 @@ export async function GET(request: NextRequest) {
                 }
             }
         }
-
+        for (const atx of user.athletes || []) {
+            const { team_athletes, ...a } = atx
+            if (athletes.findIndex(at => at.slug === a.slug) === -1) {
+                athletes.push({
+                    ...a,
+                    teams: team_athletes?.map((ta: { teams: Team }) => ta.teams) || []
+                })
+            }
+        }
     }
 
     if (team_managers?.length) {
@@ -106,6 +153,7 @@ export async function GET(request: NextRequest) {
 			user: safe,
             organization,
             athletes,
+            schedule,
 		},
 		{ status: 200, headers: { 'Set-Cookie': `access_token=${access_token}; Path=/; HttpOnly`, 'X-Access-Token': access_token } }
 	)
