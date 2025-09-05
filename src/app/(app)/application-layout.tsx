@@ -69,6 +69,7 @@ export function ApplicationLayout({ children, "data-organization": organization 
 	let pathname = usePathname()
 	const [data, setData] = useState<Record<string, any>>({})
 	const [athletes, setAthletes] = useState<Record<string, any>[]>([])
+	const [schedule, setSchedule] = useState<Record<string, any>[]>([])
 
 	useEffect(() => {
 		let toStore = {
@@ -95,6 +96,9 @@ export function ApplicationLayout({ children, "data-organization": organization 
 				.then(({ user, ...auth }) => {
                     if (auth?.athletes?.length) {
                         setAthletes(auth.athletes)
+                    }
+                    if (auth?.schedule?.length) {
+                        setSchedule(auth.schedule)
                     }
 					if (user) {
                         const {
@@ -227,7 +231,7 @@ export function ApplicationLayout({ children, "data-organization": organization 
 				</Sidebar>
 			}
 		>
-			<AppContext organization={organization} user={data} athletes={athletes}>{children}</AppContext>
+			<AppContext organization={organization} user={data} athletes={athletes} schedule={schedule}>{children}</AppContext>
 		</SidebarLayout>
 	) : Object.keys(organization).length > 0 ? (
 		<PublicLayout data-organization={organization}>{children}</PublicLayout>

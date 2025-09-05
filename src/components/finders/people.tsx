@@ -59,7 +59,7 @@ export default function PeopleFinder({
     function onChange(person: Record<string, any>) {
         setOpen(false)
         setQuery('')
-        onSelect(person)
+        if (person) onSelect(person)
     }
 
 	return (

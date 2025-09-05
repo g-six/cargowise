@@ -59,24 +59,10 @@ export async function GET(request: NextRequest) {
                     teams: [team],
                 })
             }
-            for (const item of team_calendar || []) {
-                const { location, ...cal } = item
-                schedule.push({
-                    ...cal,
-                    date: new Date(`${item.start_date}T${item.start_time}`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', ' at'),
-                    location: location ? {
-                        ...location,
-                        address: `${location.street_1}${location.street_2 ? ', ' + location.street_2 : ''}`,
-                        city_town: location.city_town,
-                        postal_code: location.postal_code,
-                        country: location.country,
-                    } : null,
-                })
-            }
         }
     }
 
-    const { data: schedule } = await supabase.from('team_calendar').select('*, location(*)').in('team', household_teams).order('start_date', { ascending: true }).order('start_time', { ascending: true }).limit(20)
+    const { data: schedule } = await supabase.from('team_calendar').select('*, location(*), team_attendance(athlete, is_going, status)').in('team', household_teams).order('start_date', { ascending: true }).order('start_time', { ascending: true }).limit(20)
 
     if (organization_managers.find((om: Record<string, string>) => om.user === user.email)) {
         const { data } = await supabase.from('athletes').select('*, team_athletes(teams(slug, name, year_group)), users(email, phone, first_name)').range(0, 99);
@@ -146,14 +132,25 @@ export async function GET(request: NextRequest) {
 			{ status: 401 }
 		)
 	}
-
 	return NextResponse.json(
 		{
 			message: 'Session found',
 			user: safe,
             organization,
             athletes,
-            schedule,
+            schedule: (schedule || []).map(s => {
+                return {
+                    ...s,
+                    athletes: athletes.filter(a => a.teams?.length).filter(a => s.team && a.teams?.findIndex((t: Team) => t.slug === s.team) !== -1).map(a => {
+                        return {
+                            ...a,
+                            is_going: s.team_attendance.find((ta: any) => ta.athlete === a.slug)?.is_going || false,
+                            status: s.team_attendance.find((ta: any) => ta.athlete === a.slug)?.status || 'unknown',
+                            teams: undefined,
+                        }
+                    })
+                }
+            }),
 		},
 		{ status: 200, headers: { 'Set-Cookie': `access_token=${access_token}; Path=/; HttpOnly`, 'X-Access-Token': access_token } }
 	)

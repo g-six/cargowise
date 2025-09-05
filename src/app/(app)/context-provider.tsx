@@ -6,12 +6,19 @@ export const Context = createContext<Record<string, any> | null>(null)
 
 export const DispatchContext = createContext<any>({})
 
-export default function AppContextProvider({ children, organization = {}, user = {}, athletes = [] }: { children: React.ReactNode; organization?: Record<string, any>; user?: Record<string, any>;  athletes?: Record<string, any>[] }) {
+export default function AppContextProvider({ children, organization = {}, user = {}, athletes = [], schedule = [] }: {
+    children: React.ReactNode;
+    organization?: Record<string, any>;
+    user?: Record<string, any>;
+    athletes?: Record<string, any>[];
+    schedule?: Record<string, any>[];
+}) {
     const [data, dispatch] = useReducer(appReducer, {
         organization,
         user,
         athletes: athletes || user.athletes || [] as Record<string, any>[],
         teams: organization?.teams || [] as Record<string, any>[],
+        schedule: schedule || [] as Record<string, any>[],
     })
 
     return <Context value={data}>
@@ -20,6 +27,7 @@ export default function AppContextProvider({ children, organization = {}, user =
 }
 
 function appReducer(state: Record<string, any>, newState: Record<string, any> | undefined) {
+    console.log(state, newState)
     if (newState === undefined) return {}
     return { ...state, ...newState }
 }

@@ -3,7 +3,7 @@ import { Button } from '@/components/button'
 import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
 import { Description, Field, FieldGroup, Fieldset, Label, Legend } from '@/components/fieldset'
 import { Input } from '@/components/input'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Text } from '../text'
 import { Textarea } from '../textarea'
 import { sub } from 'framer-motion/client'
@@ -23,6 +23,7 @@ export function SigninForm(p: {
     }
     label: SignupState
 }) {
+    const loginBtnRef = useRef<HTMLButtonElement>(null)
     let [payload, setPayload] = useState<Record<string, string>>({})
     let [isOpen, setIsOpen] = useState(false)
     let [submitAction, setSubmitAction] = useState<SignupState>(p.label)
@@ -44,6 +45,11 @@ export function SigninForm(p: {
                                     name="email"
                                     type="email"
                                     onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && payload.email && payload.password) {
+                                            loginBtnRef.current?.click()
+                                        }
+                                    }}
                                 />
                             </Field>
                             
@@ -53,6 +59,11 @@ export function SigninForm(p: {
                                     name="password"
                                     type="password"
                                     onChange={(e) => setPayload({ ...payload, [e.target.name]: e.target.value })}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && payload.email && payload.password) {
+                                            loginBtnRef.current?.click()
+                                        }
+                                    }}
                                 />
                             </Field>
                         
@@ -62,6 +73,7 @@ export function SigninForm(p: {
                 </DialogBody>
                 <DialogActions>
                     <Button
+                    ref={loginBtnRef}
                         disabled={submitAction === 'Signing in...'}
                         onClick={() => {
                             setSubmitAction('Signing in...')

@@ -1,47 +1,19 @@
 'use client'
 
 import { useAppContext } from '@/app/(app)/context-provider'
-import { Stat } from '@/app/stat'
 
 export default function SchedulePanel() {
-	const ctx = useAppContext()
-
 	const tomorrow = new Date()
 	tomorrow.setDate(tomorrow.getDate() + 1)
 	const nextTwo = new Date()
 	nextTwo.setDate(tomorrow.getDate() + 2)
-
 	return (
 		<div className="mt-4">
-			<div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
-				<Stat
-					title="Today"
-					value={new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-					change="+4.5%"
-				/>
-				<Stat
-					title="Tomorrow"
-					value={tomorrow.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-					change="+4.5%"
-				/>
-				<Stat
-					title="Next Training"
-					value={nextTwo.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-					change="-4.5%"
-				/>
-				<Stat
-					title="Next Match"
-					value={nextTwo.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-					change="-4.5%"
-				/>
-			</div>
-
 			<Calendar />
 		</div>
 	)
 }
 
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import {
 	CalendarIcon,
 	ChevronLeftIcon,
@@ -49,61 +21,10 @@ import {
 	EllipsisHorizontalIcon,
 	MapPinIcon,
 } from '@heroicons/react/20/solid'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '../button'
-
-const meetings = [
-	{
-		id: 1,
-		date: 'January 10th, 2022',
-		time: '5:00 PM',
-		datetime: '2022-01-10T17:00',
-		name: 'Leslie Alexander',
-		imageUrl:
-			'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		location: 'Starbucks',
-	},
-	{
-		id: 2,
-		date: 'January 12th, 2022',
-		time: '3:00 PM',
-		datetime: '2022-01-12T15:00',
-		name: 'Michael Foster',
-		imageUrl:
-			'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		location: 'Tim Hortons',
-	},
-	{
-		id: 3,
-		date: 'January 12th, 2022',
-		time: '5:00 PM',
-		datetime: '2022-01-12T17:00',
-		name: 'Dries Vincent',
-		imageUrl:
-			'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		location: 'Costa Coffee at Braehead',
-	},
-	{
-		id: 4,
-		date: 'January 14th, 2022',
-		time: '10:00 AM',
-		datetime: '2022-01-14T10:00',
-		name: 'Lindsay Walton',
-		imageUrl:
-			'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		location: 'Silverburn',
-	},
-	{
-		id: 5,
-		date: 'January 14th, 2022',
-		time: '12:00 PM',
-		datetime: '2022-01-14T12:00',
-		name: 'Courtney Henry',
-		imageUrl:
-			'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		location: 'The Glasgow Green',
-	},
-]
+import { fetchData } from '@/utils/api'
+import { Athlete } from '@/data'
 
 function getDaysInMonth(year: number, month: number) {
 	const days: {
@@ -113,7 +34,7 @@ function getDaysInMonth(year: number, month: number) {
 		isSelected?: boolean
 	}[] = []
 	const today = new Date()
-	const selected = today // You can set a selected date here if needed
+    let selected = today
 
 	// Get first day of the month (0 = Sunday, 1 = Monday, ...)
 	const firstDayOfMonth = new Date(year, month, 1)
@@ -163,11 +84,35 @@ function getDaysInMonth(year: number, month: number) {
 }
 
 export function Calendar() {
+    const ctx = useAppContext()
+    
 	const [now, setNow] = useState(new Date())
-    const [items, setItems] = useState(meetings)
+	const [selected, setSelected] = useState<string>(now.toISOString().substring(0, 10)) // You can set a selected date here if needed
 
 	const days = useMemo(() => getDaysInMonth(now.getFullYear(), now.getMonth()), [now])
-	return (
+
+    function getScheduleForDate(dateStr: string) {
+        if (!ctx?.schedule) return []
+        const items = ctx.schedule.filter((s: Record<string, any>) => {
+            return new Date(s.start_date).getTime() >= new Date(dateStr).getTime()
+        }).map((s: Record<string, any>) => {
+            const datetime = `${s.start_date}T${s.start_time}`
+            const date = new Date(datetime)
+            const athletes = s.athletes || []
+            return athletes.map((a: Athlete & { is_going: boolean }) => ({
+                id: `${s.id}:${a.slug}`,
+                date: date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }),
+                time: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
+                datetime,
+                name: `${a.first_name || ''}${a.first_name ? "'s " : ''}${s.title || 'Training Session'}`,
+                location: s.location ? `${s.location.name}` : 'TBC',
+                is_going: a.is_going || false,
+            }))
+        }).flat()
+        return items.length ? items : undefined
+    }
+
+    return (
 		<div className="w-full">
 			<h2 className="text-base font-semibold text-gray-900 dark:text-white">Upcoming trainings</h2>
 			<div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
@@ -205,8 +150,9 @@ export function Calendar() {
 							<button
 								key={day.date}
 								type="button"
+                                data-key={day.date}
 								data-is-today={day.isToday ? '' : undefined}
-								data-is-selected={day.isSelected ? '' : undefined}
+								data-is-selected={day.date === selected ? '' : undefined}
 								data-is-current-month={day.isCurrentMonth ? '' : undefined}
 								data-final-sunday={
 									days.findLastIndex((d) => {
@@ -217,9 +163,12 @@ export function Calendar() {
 										? ''
 										: undefined
 								}
-								className="py-1.5 not-data-is-current-month:bg-zinc-50 not-data-is-selected:not-data-is-current-month:not-data-is-today:text-zinc-400 first:rounded-tl-lg last:rounded-br-lg hover:bg-zinc-100 focus:z-10 data-final-sunday:rounded-bl-lg data-is-current-month:bg-white not-data-is-selected:data-is-current-month:not-data-is-today:text-zinc-900 data-is-current-month:hover:bg-zinc-100 data-is-selected:font-semibold data-is-selected:text-white data-is-today:font-semibold data-is-today:not-data-is-selected:text-zinc-600 nth-7:rounded-tr-lg dark:not-data-is-current-month:bg-zinc-900/75 dark:not-data-is-selected:not-data-is-current-month:not-data-is-today:text-zinc-500 dark:hover:bg-zinc-900/25 dark:data-is-current-month:bg-zinc-900/90 dark:not-data-is-selected:data-is-current-month:not-data-is-today:text-white dark:data-is-current-month:hover:bg-zinc-900/50 dark:data-is-selected:text-zinc-900 dark:data-is-today:not-data-is-selected:text-zinc-400"
+                                data-agenda={ctx?.schedule.filter((s: Record<string, any>) => {
+                                    return s.start_date === day.date
+                                }).length ? '' : undefined}
+								className="py-1.5 not-data-is-current-month:bg-zinc-50 not-data-is-selected:not-data-is-current-month:not-data-is-today:text-zinc-400 first:rounded-tl-lg last:rounded-br-lg hover:bg-zinc-100 focus:z-10 data-final-sunday:rounded-bl-lg data-is-current-month:bg-white not-data-is-selected:data-is-current-month:not-data-is-today:text-zinc-900 data-is-current-month:hover:bg-zinc-100 data-is-selected:font-semibold data-is-selected:text-white data-is-today:font-semibold data-is-today:not-data-is-selected:text-zinc-600 nth-7:rounded-tr-lg dark:not-data-is-current-month:bg-zinc-900/75 dark:not-data-is-selected:not-data-is-current-month:not-data-is-today:text-zinc-500 dark:hover:bg-zinc-900/25 dark:data-is-current-month:bg-zinc-900/90 dark:not-data-is-selected:data-is-current-month:not-data-is-today:text-white dark:data-is-current-month:hover:bg-zinc-900/50 dark:data-is-selected:text-zinc-900 dark:data-is-today:not-data-is-selected:text-zinc-400 data-agenda:border-lime-500! border-b-2 border-transparent"
 								onClick={() => {
-									console.log(day.date)
+                                    setSelected(day.date)
 								}}
 							>
 								<time
@@ -236,7 +185,7 @@ export function Calendar() {
 						Add Event
 					</Button>
 				</div>
-				<ScheduleList items={items} />
+				<ScheduleList items={getScheduleForDate(selected)} />
 			</div>
 		</div>
 	)
@@ -245,16 +194,13 @@ export function Calendar() {
 export function ScheduleList({ items }: {
     items: Record<string, any>[]
 }) {
+    const [going, toggleGoing] = useState<string[]>((items || []).map(i => i.is_going ? i.id : undefined).filter(Boolean) as string[])
+
     return <ol className="mt-4 divide-y divide-gray-100 text-sm/6 lg:col-span-7 xl:col-span-8 dark:divide-white/10">
-        {items.map((item) => (
+        {items?.map((item) => (
             <li key={item.id} className="relative flex gap-x-6 py-6 xl:static">
-                <img
-                    alt=""
-                    src={item.imageUrl}
-                    className="size-14 flex-none rounded-full dark:outline dark:-outline-offset-1 dark:outline-white/10"
-                />
                 <div className="flex-auto">
-                    <h3 className="pr-10 font-semibold text-gray-900 xl:pr-0 dark:text-white">{item.name}</h3>
+                    <h3 data-is-going={going.indexOf(item.id) !== -1 ? '' : undefined} className="pr-10 font-semibold text-gray-900 xl:pr-0 dark:text-white data-is-going:text-lime-500 dark:data-is-going:text-lime-300">{item.name}</h3>
                     <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row dark:text-gray-400">
                         <div className="flex items-start gap-x-3">
                             <dt className="mt-0.5">
@@ -276,37 +222,23 @@ export function ScheduleList({ items }: {
                         </div>
                     </dl>
                 </div>
-                <Menu as="div" className="absolute top-6 right-0 xl:relative xl:top-auto xl:right-auto xl:self-center">
-                    <MenuButton className="relative flex items-center rounded-full text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-white">
-                        <span className="absolute -inset-2" />
-                        <span className="sr-only">Open options</span>
-                        <EllipsisHorizontalIcon aria-hidden="true" className="size-5" />
-                    </MenuButton>
+                <div>
+                    <Button type='button' data-is-going={going.indexOf(item.id) !== -1 ? '' : undefined} className='data-is-going:bg-lime-600!' onClick={() => {
+                let is_going = false;
+                if (going.indexOf(item.id) === -1) {
+                    toggleGoing([...going, item.id])
+                } else {
+                    toggleGoing(going.filter(g => g !== item.id))
+                    is_going = true
+                }
 
-                    <MenuItems
-                        transition
-                        className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-                    >
-                        <div className="py-1">
-                            <MenuItem>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-zinc-100 data-focus:text-gray-900 data-focus:outline-hidden dark:text-gray-300 dark:data-focus:bg-white/5 dark:data-focus:text-white"
-                                >
-                                    Edit
-                                </a>
-                            </MenuItem>
-                            <MenuItem>
-                                <a
-                                    href="#"
-                                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-zinc-100 data-focus:text-gray-900 data-focus:outline-hidden dark:text-gray-300 dark:data-focus:bg-white/5 dark:data-focus:text-white"
-                                >
-                                    Cancel
-                                </a>
-                            </MenuItem>
-                        </div>
-                    </MenuItems>
-                </Menu>
+                fetchData('/api/attendance', is_going ? 'DELETE' : 'POST', {
+                    ...item,
+                    id: item.id.split(':')[0],
+                    athlete: item.id.split(':')[1],
+                })
+            }}>Going</Button>
+                </div>
             </li>
         ))}
     </ol>
