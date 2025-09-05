@@ -51,7 +51,7 @@ export function AddAthleteForm(p: {
 
     function submitForm() {
         setSubmitAction('Creating...')
-        fetchData('/api/team/' + p['data-team'].slug + '/athlete', 'POST', payload).then(result => {
+        fetchData('/api/team/' + p['data-team'].slug + '/athlete', { method: 'POST' }, payload).then(result => {
             if (!result) {
                 alert('An error occurred. Please try again.')
             } else {
@@ -69,7 +69,7 @@ export function AddAthleteForm(p: {
             <div className='flex gap-2'>
                 <PeopleFinder people={p['data-people']} onSelect={person => {
                     setIsOpen(false)
-                    fetchData('/api/team/' + p['data-team'].slug + '/athlete/' + person.slug, 'PUT', { role: 'N/A' }).then(record => {
+                    fetchData('/api/team/' + p['data-team'].slug + '/athlete/' + person.slug, { method: 'PUT' }, { role: 'N/A' }).then(record => {
                         if (!record) {
                             alert('An error occurred. Please try again.')
                         } else {

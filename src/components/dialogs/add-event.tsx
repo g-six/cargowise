@@ -70,9 +70,21 @@ export function AddEventForm(p: {
 
     function submitForm() {
         setSubmitAction('Creating...')
+        
+        fetchData('/api/schedule', {
+            method: 'POST',
+        }, payload).then(record => {
+            if (!record) {
+                alert('An error occurred. Please try again.')
+            } else {
+                setPayload({})
+                p.onComplete(record)
+                setIsOpen(false)
+            }
+        }).finally(() => {
+            setSubmitAction('Add Event')
+        })
     }
-
-    console.table(locations)
 
     return (
         <>
@@ -165,7 +177,7 @@ export function AddEventForm(p: {
                                             }}
                                             displayValue={(location) => location?.name || ''}
                                             onUserInput={setSearchTerm}
-                                            onChange={(location: Record<string, string>) => setPayload({ ...payload, location: location.slug })}
+                                            onChange={(location: Record<string, string>) => setPayload({ ...payload, location: location?.slug || '' })}
                                         >
                                             {(location) => (
                                             <ComboboxOption value={location}>
@@ -187,7 +199,14 @@ export function AddEventForm(p: {
                     </div>
 
                     <Button
-                        disabled={submitAction === 'Creating...'}
+                        disabled={submitAction === 'Creating...'
+                            || !payload.title
+                            || !payload.team
+                            || !payload.start_date
+                            || !payload.start_time
+                            || !payload.duration
+                            || !payload.location
+                        }
                         onClick={() => submitForm()}
                         color={theme.brand as any}
                         className="min-w-32"
