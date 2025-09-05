@@ -52,7 +52,7 @@ export async function createAthlete(data: {
     role?: string;
     number?: number;
     date_of_birth: string;
-    user: string;
+    user?: string;
 }) {
     if (!data.slug) {
         data.slug = slugifyAthlete(data)
@@ -60,12 +60,21 @@ export async function createAthlete(data: {
         console.log(existing)
         return existing
     }
-    const { number, role, team, ...athlete_record } = data
+    const { user, number, role, team, ...athlete_record } = data
 	const { data: athlete, error } = await supabase.from('athletes').insert(athlete_record).select('*').single();
 	if (error) {
 		console.warn('Error creating athlete:', error)
 		return null
 	}
+
+    if (number || role || team) {
+        return await supabase.from('team_athletes').insert({
+            athlete: athlete.slug,
+            team,
+            number: number || null,
+            role: role || 'N/A'
+        }).select('*, athlete(*)').single();
+    }
 
     return athlete;
 }
