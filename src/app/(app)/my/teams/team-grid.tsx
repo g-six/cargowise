@@ -8,8 +8,7 @@ export default function TeamGrid() {
 	const ctx = useAppContext()
     const dispatch = useAppDispatch();
 
-    console.table(ctx?.athletes);
-	return (
+    return (
 		<div className="mt-4 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
 			{ctx?.teams.map((t: Team) => (
 				<Stat

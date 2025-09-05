@@ -96,7 +96,7 @@ export default function AthletesTable(p: { 'data-teams'?: Record<string, any>[],
     function handleDelete(record: TeamAthlete) {
         // Handle delete action
         if (team) {
-            fetchData('/api/team/' + team.slug + '/athlete/' + record.slug, 'DELETE').then(getData)
+            fetchData('/api/team/' + team.slug + '/athlete/' + record.slug, { method: 'DELETE' }).then(getData)
         }
     }
 

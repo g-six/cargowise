@@ -77,7 +77,7 @@ export function SigninForm(p: {
                         disabled={submitAction === 'Signing in...'}
                         onClick={() => {
                             setSubmitAction('Signing in...')
-                            fetchData('/api/auth', 'PUT', payload).then(d => {
+                            fetchData('/api/auth', { method: 'PUT' }, payload).then(d => {
                                 const { user, message } = d as {
                                     user?: Record<string, string>
                                     message?: string

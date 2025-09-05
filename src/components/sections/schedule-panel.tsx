@@ -21,10 +21,11 @@ import {
 	EllipsisHorizontalIcon,
 	MapPinIcon,
 } from '@heroicons/react/20/solid'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Button } from '../button'
 import { fetchData } from '@/utils/api'
 import { Athlete } from '@/data'
+import { AddEventForm } from '../dialogs/add-event'
 
 function getDaysInMonth(year: number, month: number) {
 	const days: {
@@ -99,8 +100,17 @@ export function Calendar() {
             const datetime = `${s.start_date}T${s.start_time}`
             const date = new Date(datetime)
             const athletes = s.athletes || []
+            if (athletes.length === 0) return {
+                id: s.id,
+                date: date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }),
+                time: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
+                datetime,
+                name: s.title || 'Training Session',
+                location: s.location ? `${s.location.name}` : 'TBC',
+            }
             return athletes.map((a: Athlete & { is_going: boolean }) => ({
-                id: `${s.id}:${a.slug}`,
+                id: s.id,
+                athlete: a.slug,
                 date: date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' }),
                 time: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
                 datetime,
@@ -180,10 +190,8 @@ export function Calendar() {
 							</button>
 						))}
 					</div>
-					<div className="flex-1" />
-					<Button type="button" className="my-8 w-full">
-						Add Event
-					</Button>
+					<div className="flex-1 my-2" />
+					<AddEventForm onComplete={console.log} />
 				</div>
 				<ScheduleList items={getScheduleForDate(selected)} />
 			</div>
@@ -194,13 +202,13 @@ export function Calendar() {
 export function ScheduleList({ items }: {
     items: Record<string, any>[]
 }) {
-    const [going, toggleGoing] = useState<string[]>((items || []).map(i => i.is_going ? i.id : undefined).filter(Boolean) as string[])
+    const [going, toggleGoing] = useState<string[]>((items || []).map(i => i.is_going ? `${i.id}:${i.athlete}` : undefined).filter(Boolean) as string[])
 
     return <ol className="mt-4 divide-y divide-gray-100 text-sm/6 lg:col-span-7 xl:col-span-8 dark:divide-white/10">
         {items?.map((item) => (
-            <li key={item.id} className="relative flex gap-x-6 py-6 xl:static">
+            <li key={`${item.id}:${item.athlete}`} className="relative flex gap-x-6 py-6 xl:static">
                 <div className="flex-auto">
-                    <h3 data-is-going={going.indexOf(item.id) !== -1 ? '' : undefined} className="pr-10 font-semibold text-gray-900 xl:pr-0 dark:text-white data-is-going:text-lime-500 dark:data-is-going:text-lime-300">{item.name}</h3>
+                    <h3 data-is-going={going.indexOf(`${item.id}:${item.athlete}`) !== -1 ? '' : undefined} className="pr-10 font-semibold text-gray-900 xl:pr-0 dark:text-white data-is-going:text-lime-500 dark:data-is-going:text-lime-300">{item.name}</h3>
                     <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row dark:text-gray-400">
                         <div className="flex items-start gap-x-3">
                             <dt className="mt-0.5">
@@ -222,23 +230,21 @@ export function ScheduleList({ items }: {
                         </div>
                     </dl>
                 </div>
-                <div>
-                    <Button type='button' data-is-going={going.indexOf(item.id) !== -1 ? '' : undefined} className='data-is-going:bg-lime-600!' onClick={() => {
-                let is_going = false;
-                if (going.indexOf(item.id) === -1) {
-                    toggleGoing([...going, item.id])
-                } else {
-                    toggleGoing(going.filter(g => g !== item.id))
-                    is_going = true
-                }
+                {item.is_going !== undefined && <div>
+                    <Button type='button' data-is-going={going.indexOf(`${item.id}:${item.athlete}`) !== -1 ? '' : undefined} className='data-is-going:bg-lime-600!' onClick={() => {
+                        let is_going = false;
+                        if (going.indexOf(`${item.id}:${item.athlete}`) === -1) {
+                            toggleGoing([...going, `${item.id}:${item.athlete}`])
+                        } else {
+                            toggleGoing(going.filter(g => g !== `${item.id}:${item.athlete}`))
+                            is_going = true
+                        }
 
-                fetchData('/api/attendance', is_going ? 'DELETE' : 'POST', {
-                    ...item,
-                    id: item.id.split(':')[0],
-                    athlete: item.id.split(':')[1],
-                })
-            }}>Going</Button>
-                </div>
+                        fetchData('/api/attendance', {
+                            method: is_going ? 'DELETE' : 'POST',
+                        }, item)
+                    }}>Going</Button>
+                </div>}
             </li>
         ))}
     </ol>

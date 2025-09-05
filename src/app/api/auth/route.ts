@@ -62,18 +62,30 @@ export async function GET(request: NextRequest) {
         }
     }
 
-    const { data: schedule } = await supabase.from('team_calendar').select('*, location(*), team_attendance(athlete, is_going, status)').in('team', household_teams).order('start_date', { ascending: true }).order('start_time', { ascending: true }).limit(20)
+    let { data: schedule } = await supabase.from('team_calendar').select('*, location(*), team_attendance(athlete, is_going, status)').in('team', household_teams).order('start_date', { ascending: true }).order('start_time', { ascending: true }).limit(20)
+
+    if (!schedule) schedule = []
+
+    const organization_calendar: Record<string, any>[] = []
 
     if (organization_managers.find((om: Record<string, string>) => om.user === user.email)) {
-        const { data } = await supabase.from('athletes').select('*, team_athletes(teams(slug, name, year_group)), users(email, phone, first_name)').range(0, 99);
-
-        if (data?.length) athletes.push(...data.map(a => {
-            const { team_athletes, ...athlete } = a
-            return {
-                ...athlete,
-                teams: team_athletes?.map((ta: { teams: Team }) => ta.teams) || []
+        const [{ data }, { data: teams }] = await Promise.all([
+            supabase.from('athletes').select(`*, users(email, phone, first_name)`).range(0, 99),
+            supabase.from('teams').select(`*, team_calendar(*, location(*))`).eq('organization', organization.slug).range(0, 99)
+        ]);
+        if (data?.length) athletes.push(...data);
+        for (const t of teams || []) {
+            if (t.team_calendar?.length) {
+                for (const tc of t.team_calendar) {
+                    if (organization_calendar.findIndex(oc => oc.id === tc.id) === -1) {
+                        organization_calendar.push({
+                            ...tc,
+                            team_name: t.name,
+                        })
+                    }
+                }
             }
-        }));
+        }
     } else if (user.organization_members?.length) {
         for (const om of user.organization_members) {
             if (om.athletes) {
@@ -138,7 +150,7 @@ export async function GET(request: NextRequest) {
 			user: safe,
             organization,
             athletes,
-            schedule: (schedule || []).map(s => {
+            schedule: ((schedule.length ? schedule : organization_calendar) || []).map(s => {
                 return {
                     ...s,
                     athletes: athletes.filter(a => a.teams?.length).filter(a => s.team && a.teams?.findIndex((t: Team) => t.slug === s.team) !== -1).map(a => {
@@ -160,6 +172,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    const host = request.headers.get('x-domain') || request.headers.get('host')?.split(':')?.[0] || ''
+    const organization = await getOrganizationByDomain(host)
+
+    if (!organization) return NextResponse.json({ message: 'No organization found' }, { status: 400 })
 	const {
 		guardian_first_name,
 		guardian_last_name,
@@ -221,6 +237,7 @@ export async function POST(request: NextRequest) {
         if (athleteResults.data?.slug) await supabase.from('organization_members').insert({
             user: email,
             athlete: athleteResults.data.slug,
+            organization: organization.slug,
         });
 
 		return NextResponse.json(

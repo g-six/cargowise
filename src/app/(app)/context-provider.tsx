@@ -27,7 +27,6 @@ export default function AppContextProvider({ children, organization = {}, user =
 }
 
 function appReducer(state: Record<string, any>, newState: Record<string, any> | undefined) {
-    console.log(state, newState)
     if (newState === undefined) return {}
     return { ...state, ...newState }
 }

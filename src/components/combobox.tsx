@@ -3,6 +3,8 @@
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import { useState } from 'react'
+import Loader from './loader'
+import Spinner from './spinners'
 
 export function Combobox<T>({
   options,
@@ -14,15 +16,20 @@ export function Combobox<T>({
   autoFocus,
   'aria-label': ariaLabel,
   children,
+  onUserInput,
+  displayFilter,
   ...props
 }: {
   options: T[]
   displayValue: (value: T | null) => string | undefined
+  displayFilter?: (value: T | null) => string | undefined
   filter?: (value: T, query: string) => boolean
+  onUserInput?: (query: string) => void
   className?: string
   placeholder?: string
   autoFocus?: boolean
   'aria-label'?: string
+  loading?: boolean
   children: (value: NonNullable<T>) => React.ReactElement
 } & Omit<Headless.ComboboxProps<T, false>, 'as' | 'multiple' | 'children'> & { anchor?: 'top' | 'bottom' }) {
   const [query, setQuery] = useState('')
@@ -31,7 +38,7 @@ export function Combobox<T>({
     query === ''
       ? options
       : options.filter((option) =>
-          filter ? filter(option, query) : displayValue(option)?.toLowerCase().includes(query.toLowerCase())
+          filter ? filter(option, query) : displayFilter ? displayFilter(option)?.toLowerCase().includes(query.toLowerCase()) : displayValue(option)?.toLowerCase().includes(query.toLowerCase())
         )
 
   return (
@@ -47,7 +54,7 @@ export function Combobox<T>({
           // Background color is moved to control and shadow is removed in dark mode so hide `before` pseudo
           'dark:before:hidden',
           // Focus ring
-          'after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-transparent after:ring-inset sm:focus-within:after:ring-2 sm:focus-within:after:ring-blue-500',
+          'after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-transparent after:ring-inset sm:focus-within:after:ring-2 sm:focus-within:after:ring-zinc-500',
           // Disabled state
           'has-data-disabled:opacity-50 has-data-disabled:before:bg-zinc-950/5 has-data-disabled:before:shadow-none',
           // Invalid state
@@ -59,7 +66,10 @@ export function Combobox<T>({
           data-slot="control"
           aria-label={ariaLabel}
           displayValue={(option: T) => displayValue(option) ?? ''}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value)
+            onUserInput?.(event.target.value as any)
+          }}
           placeholder={placeholder}
           className={clsx([
             className,
@@ -84,7 +94,7 @@ export function Combobox<T>({
           ])}
         />
         <Headless.ComboboxButton className="group absolute inset-y-0 right-0 flex items-center px-2">
-          <svg
+          {props.loading ? <Spinner className='w-4 h-4 fill-zinc-400' /> : <svg
             className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 group-data-hover:stroke-zinc-700 sm:size-4 dark:stroke-zinc-400 dark:group-data-hover:stroke-zinc-300 forced-colors:stroke-[CanvasText]"
             viewBox="0 0 16 16"
             aria-hidden="true"
@@ -92,7 +102,7 @@ export function Combobox<T>({
           >
             <path d="M5.75 10.75L8 13L10.25 10.75" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
             <path d="M10.25 5.25L8 3L5.75 5.25" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          </svg>}
         </Headless.ComboboxButton>
       </span>
       <Headless.ComboboxOptions
@@ -149,7 +159,7 @@ export function ComboboxOption<T>({
         // Typography
         'text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
         // Focus
-        'outline-hidden data-focus:bg-blue-500 data-focus:text-white',
+        'outline-hidden data-focus:bg-zinc-500 data-focus:text-white',
         // Forced colors mode
         'forced-color-adjust-none forced-colors:data-focus:bg-[Highlight] forced-colors:data-focus:text-[HighlightText]',
         // Disabled

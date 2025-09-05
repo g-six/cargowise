@@ -950,6 +950,14 @@ export type InsertTeamAthlete = {
     number?: number;
 } & Athlete
 
+export type TeamCalendar = {
+    id: string;
+    title: string;
+    start_date: string;
+    start_time: string;
+    duration_minutes: number;
+}
+
 export type Team = {
     name: string;
     slug: string;
@@ -957,4 +965,5 @@ export type Team = {
     year_group: number;
     organization: string;
     athletes: TeamAthlete[];
+    team_calendar: TeamCalendar[];
 }

@@ -29,7 +29,7 @@ export function SignupForm(p: {
 			if (direction === -1) setSubmitAction('Player information')
 			else {
                 setSubmitAction('Signing up...')
-                fetchData('/api/auth', 'POST', payload).then(d => {
+                fetchData('/api/auth', { method: 'POST' }, payload).then(d => {
                     const { access_token, record } = d;
                     if (access_token) {
                         localStorage.setItem('access_token', access_token);

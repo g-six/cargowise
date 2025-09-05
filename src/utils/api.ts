@@ -1,7 +1,10 @@
-export async function fetchData(url: string, method: 'GET' | 'POST' | 'DELETE' | 'PUT' = 'GET', body?: Record<string, any>) {
+export async function fetchData(url: string, options?: {
+    method?: 'GET' | 'POST' | 'DELETE' | 'PUT'
+    signal?: AbortSignal
+}, body?: Record<string, any>) {
     const access_token = localStorage.getItem('access_token') || ''
     const response = await fetch(url, {
-        method,
+        ...options,
         headers: access_token ? {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${access_token}`,

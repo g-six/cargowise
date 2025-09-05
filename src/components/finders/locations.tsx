@@ -11,29 +11,28 @@ import {
 } from '@headlessui/react'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { useEffect, useState } from 'react'
-import { Button } from '../button'
 import { fetchData } from '@/utils/api'
 
-export default function PeopleFinder({
-	people = [],
+export default function LocationFinder({
+	locations = [],
 	onSelect,
-    label = 'Add existing player'
+    label = 'location'
 }: {
-	people: Record<string, any>[]
-	onSelect(person: Record<string, any>): void
-    label?: string
+	locations?: Record<string, any>[]
+	onSelect(location: Record<string, any>): void
+    label?: string;
 }) {
 	const [query, setQuery] = useState('')
 	const [debouncedQuery, setDebouncedQuery] = useState(query)
 	const [open, setOpen] = useState(false)
 	const [loading, toggleLoading] = useState(true)
-	const [filteredPeople, setFilteredPeople] = useState(people)
+	const [filtered, setFilteredLocations] = useState(locations)
 
 	useEffect(() => {
 		if (query) {
-			setFilteredPeople(people.filter((person) => person.first_name.toLowerCase().includes(query.toLowerCase())))
+			setFilteredLocations(locations.filter((location) => location.name.toLowerCase().startsWith(query.toLowerCase())) || [])
 		} else {
-			setFilteredPeople(people)
+			setFilteredLocations(locations)
 		}
 		const handler = setTimeout(() => {
 			setDebouncedQuery(query)
@@ -44,11 +43,11 @@ export default function PeopleFinder({
 	useEffect(() => {
 		if (debouncedQuery) {
             toggleLoading(true);
-			fetchData(`/api/athletes?filters=name:${debouncedQuery}`)
+			fetchData(`/api/locations?filters=name:${debouncedQuery}`)
 				.then((filteredResults) => {
-                    setFilteredPeople(prev => ([
-                        ...people.filter((person) => person.first_name.toLowerCase().includes(query.toLowerCase()) || person.last_name.toLowerCase().includes(query.toLowerCase())),
-                        ...filteredResults.filter((fr: typeof filteredResults[0]) => people.findIndex(p => p.slug === fr.slug) === -1),
+                    setFilteredLocations(prev => ([
+                        ...locations.filter((location) => location.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').startsWith(query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))),
+                        ...filteredResults.filter((fr: typeof filteredResults[0]) => locations.findIndex(p => p.slug === fr.slug) === -1),
                     ]))
 				}).finally(() => {
 					toggleLoading(false);
@@ -56,17 +55,11 @@ export default function PeopleFinder({
 		}
 	}, [debouncedQuery])
 
-    function onChange(person: Record<string, any>) {
-        setOpen(false)
-        setQuery('')
-        if (person) onSelect(person)
-    }
-
 	return (
 		<>
-			<Button type="button" color="lime" onClick={() => setOpen(true)}>
-				{label}
-			</Button>
+			<button type="button" className='underline' onClick={() => setOpen(true)}>
+				Search for a location
+			</button>
 			<Dialog
 				className="relative z-10"
 				open={open}
@@ -85,12 +78,12 @@ export default function PeopleFinder({
 						transition
 						className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl outline-1 outline-black/5 transition-all data-closed:scale-95 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:divide-white/10 dark:bg-gray-900 dark:-outline-offset-1 dark:outline-white/10"
 					>
-						<Combobox onChange={onChange}>
+						<Combobox onChange={onSelect}>
 							<div className="grid grid-cols-1">
 								<ComboboxInput
 									autoFocus
 									className="col-start-1 row-start-1 h-12 w-full pr-4 pl-11 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500"
-									placeholder="Search by name..."
+									placeholder="Search..."
 									onChange={(event) => setQuery(event.target.value)}
 									onBlur={() => setQuery('')}
 								/>
@@ -100,25 +93,25 @@ export default function PeopleFinder({
 								/>
 							</div>
 
-							{filteredPeople.length > 0 && (
+							{filtered.length > 0 && (
 								<ComboboxOptions
 									static
 									className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800 dark:text-gray-300"
 								>
-									{filteredPeople.map((person) => (
+									{filtered.map((location) => (
 										<ComboboxOption
-											key={person.slug}
-											value={person}
+											key={location.slug}
+											value={location}
 											className={`cursor-default px-4 py-2 select-none data-focus:bg-slate-700 data-focus:text-white data-focus:outline-hidden dark:data-focus:bg-slate-700 flex gap-1`}
 										>
-											<span className='w-24 text-gray-500'>{person.date_of_birth}</span> <span className='flex-1'>{person.last_name}, {person.first_name}</span>
+											<span className='w-24 text-gray-500'>{location.year_location}</span> <span className='flex-1'>{location.name}</span>
 										</ComboboxOption>
 									))}
 								</ComboboxOptions>
 							)}
 
-							{query !== '' && filteredPeople.length === 0 && (
-								<p className="p-4 text-sm text-gray-500 dark:text-gray-400">{loading ? 'Loading..' : 'No people found. Close this form and add a new member instead'}.</p>
+							{query !== '' && filtered.length === 0 && (
+								<p className="p-4 text-sm text-gray-500 dark:text-gray-400">{loading ? 'Loading..' : `No ${label} found. Close this form and add a new member instead`}.</p>
 							)}
 						</Combobox>
 					</DialogPanel>

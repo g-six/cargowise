@@ -42,7 +42,7 @@ export function AthleteForm(p: {
     function submitForm() {
         if (!team) return
         setSubmitAction('Updating...')
-        fetchData('/api/team/' + team.slug + '/athlete/' + athlete.slug, 'PUT', payload).then(record => {
+        fetchData('/api/team/' + team.slug + '/athlete/' + athlete.slug, { method: 'PUT' }, payload).then(record => {
             if (!record) {
                 alert('An error occurred. Please try again.')
             } else {
@@ -59,7 +59,7 @@ export function AthleteForm(p: {
         if (!team) return
         const athlete = p['data-athlete'].slug
         setIsRemoving(true)
-        fetchData('/api/team/' + team.slug + '/athlete/' + athlete, 'DELETE').then(record => {
+        fetchData('/api/team/' + team.slug + '/athlete/' + athlete, { method: 'DELETE' }).then(record => {
             if (!record) {
                 alert('An error occurred. Please try again.')
             } else {
