@@ -36,7 +36,7 @@ export async function createOrganizationIfNotFound(data: {
 export async function getOrganizationByDomain(domain: string): Promise<Record<string, any> | null> {
     const { data, error } = await supabase
         .from('domains')
-        .select('has_registration, organizations(*, teams(*), organization_managers(*), leagues(*, league_pricing(*)))')
+        .select('has_registration, organizations(*, teams(*, team_coaches(users(email, phone, first_name))), organization_managers(*), leagues(*, league_pricing(*)))')
         .ilike('domain', domain)
         .single()
 
@@ -45,13 +45,20 @@ export async function getOrganizationByDomain(domain: string): Promise<Record<st
         return null
     }
 
-    const {leagues, ...organization} = data.organizations as Record<string, any>
+    const {leagues, teams, ...organization} = data.organizations as Record<string, any>
 
     const league = (leagues?.[0] || {}) as Record<string, any>
 
     return {
         ...organization,
         league,
+        teams: (teams || []).map((team: Record<string, any>) => {
+            const { team_coaches, ...rest } = team
+            return {
+                ...rest,
+                coaches: (team_coaches || []).map((tc: Record<string, any>) => tc.users)
+            }
+        })
     }
 }
 

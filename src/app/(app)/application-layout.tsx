@@ -112,7 +112,6 @@ export function ApplicationLayout({ children, "data-organization": organization 
                             postal_code,
                             province,
                             street_address,
-                            teams,
                         } = user
                         localStorage.setItem('user', JSON.stringify({
                             city,

@@ -73,7 +73,8 @@ export function AddEventForm(p: {
         
         fetchData('/api/schedule', {
             method: 'POST',
-        }, payload).then(record => {
+        }, payload).then(results => {
+            const record = results.record;
             if (!record) {
                 alert('An error occurred. Please try again.')
             } else {

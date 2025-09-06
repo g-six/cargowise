@@ -32,7 +32,7 @@ export async function createTeamIfNotFound(data: {
 export async function getTeam(slug: string): Promise<Record<string, any> | null> {
     const { data, error } = await supabase
         .from('teams')
-        .select('*, team_athletes(*, athletes(*))')
+        .select('*, team_athletes(*, athletes(*, organization_members(relationship_to_athlete, users(first_name, email, phone)))), team_coaches(*, users(first_name, last_name, email, phone)))')
         .ilike('slug', slug)
         .single()
 
@@ -41,15 +41,27 @@ export async function getTeam(slug: string): Promise<Record<string, any> | null>
         return null
     }
 
-    const {team_athletes, ...team} = data as Record<string, any>
+    const {team_athletes, team_coaches: coaches, ...team} = data as Record<string, any>
 
     return {
         ...team,
-        athletes: team_athletes.map((ta: Record<string, any>) => {
-            const { athletes, ...rest } = ta
+        coaches: (coaches || []).map((tc: Record<string, any>) => {
+            const { users, ...rest } = tc
             return {
                 ...rest,
-                ...athletes,
+                ...users,
+            }
+        }),
+        athletes: team_athletes.map((ta: Record<string, any>) => {
+            const { athletes: { organization_members, ...athlete }, ...rest } = ta
+            if (organization_members?.length) {
+                athlete.guardians = organization_members.map((om: Record<string, any>) => om.users).flat()
+            } else {
+                console.log('No organization members for athlete', athlete.first_name)
+            }
+            return {
+                ...rest,
+                ...athlete,
             }
         }),
     }

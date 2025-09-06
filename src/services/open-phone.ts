@@ -30,6 +30,8 @@ export async function sendTextMessage(phoneNumber: string, content: string): Pro
         console.warn(errorData);
 		throw new Error(`Failed to send message: ${errorData.message}`);
 	}
+
+    return await response.json();
 }
 
 export async function listContacts(filters: Record<string, string>): Promise<any[]> {

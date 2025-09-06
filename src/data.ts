@@ -938,6 +938,32 @@ export type Athlete = {
     date_of_birth: string;
     photo_url: string;
 }
+
+export type InsertTeamCoach = {
+    team: string;
+    coach: string;
+    rank: number;
+}
+
+export type User = {
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    photo_url?: string;
+}
+
+export type TeamCoach = {
+    team: string;
+    coach: string;
+    rank: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    photo_url?: string;
+}
+
 export type TeamAthlete = {
     role: 'S' | 'CB' | 'WB' | 'M' | 'W' | 'GK'
     team: string;
@@ -965,5 +991,6 @@ export type Team = {
     year_group: number;
     organization: string;
     athletes: TeamAthlete[];
+    coaches: TeamCoach[];
     team_calendar: TeamCalendar[];
 }

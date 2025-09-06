@@ -16,8 +16,29 @@ export async function GET(request: NextRequest) {
 
 	const {
 		data,
-	} = await supabase.from('sessions').select('*, user(*, athletes(slug, first_name, last_name, date_of_birth, team_attendance(*), team_athletes(team(slug, name, age_group, year_group))), organization_members(*, athletes(*)), team_managers(teams(*, team_athletes(number, role, athlete(*)))))').eq('access_token', access_token).single()
-    if (!data?.user) 
+	} = await supabase.from('sessions').select(`*, 
+        user(
+            *,
+            athletes(
+                slug, first_name, last_name, date_of_birth, 
+                team_attendance(*), 
+                team_athletes(
+                    team(slug, name, age_group, year_group)
+                )
+            ),
+            organization_members(
+                *, 
+                athletes(*)
+            ),
+            team_managers(
+                teams(*, 
+                    team_athletes(number, role, 
+                        athlete(*)
+                    )
+                )
+            )
+        )`).eq('access_token', access_token).single()
+    if (!data?.user)
 		return NextResponse.json(
 			{
 				message: 'Incorrect credentials',
@@ -70,7 +91,7 @@ export async function GET(request: NextRequest) {
 
     if (organization_managers.find((om: Record<string, string>) => om.user === user.email)) {
         const [{ data }, { data: teams }] = await Promise.all([
-            supabase.from('athletes').select(`*, users(email, phone, first_name)`).range(0, 99),
+            supabase.from('athletes').select(`*, users(email, phone, first_name))`).range(0, 99),
             supabase.from('teams').select(`*, team_calendar(*, location(*))`).eq('organization', organization.slug).range(0, 99)
         ]);
         if (data?.length) athletes.push(...data);
