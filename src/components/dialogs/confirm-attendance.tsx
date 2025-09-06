@@ -10,7 +10,7 @@ import { Team } from '@/data'
 import { Select } from '../select'
 import { fetchData } from '@/utils/api'
 import { useEffect, useRef } from 'react'
-import { useAppContext } from '@/app/(app)/context-provider'
+import { useAppContext } from '@/app/context-provider'
 import { CheckIcon } from '@heroicons/react/20/solid'
 
 type State = 'Going' | 'Updating...' | 'Close'

@@ -12,7 +12,7 @@ import { Select } from '../select'
 import { fetchData } from '@/utils/api'
 import { useEffect, useRef } from 'react'
 import PeopleFinder from '../finders/people'
-import { useAppContext } from '@/app/(app)/context-provider'
+import { useAppContext } from '@/app/context-provider'
 
 type State = 'Add Event' | 'Creating...' | 'Close'
 

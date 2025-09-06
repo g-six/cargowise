@@ -1,7 +1,7 @@
 'use client'
 
 import { Stat } from '@/app/stat'
-import { useAppContext } from '../../context-provider'
+import { useAppContext } from '@/app/context-provider'
 import { Team } from '@/data';
 
 export default function TeamGrid() {

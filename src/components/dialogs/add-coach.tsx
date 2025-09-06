@@ -11,7 +11,7 @@ import { Select } from '../select'
 import { fetchData } from '@/utils/api'
 import { useEffect, useRef } from 'react'
 import PeopleFinder from '../finders/people'
-import { useAppContext, useAppDispatch } from '@/app/(app)/context-provider'
+import { useAppContext, useAppDispatch } from '@/app/context-provider'
 
 type AddCoachState = 'Create Record' | 'Creating...' | 'Close'
 

@@ -4,8 +4,7 @@ import { ChevronUpIcon } from "@heroicons/react/16/solid";
 import { Avatar } from "./avatar";
 import { Dropdown, DropdownButton } from "./dropdown";
 import { SidebarItem } from "./sidebar";
-import { AccountDropdownMenu } from "@/app/(app)/application-layout";
-import { useEffect, useState } from "react";
+import AccountDropdownMenu from "./data-menu/account";
 
 export default function SessionComponent({ data }: { data: Record<string, any> }) {
   return (

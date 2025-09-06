@@ -1,7 +1,7 @@
 import { Stat } from '@/app/stat'
 import { Heading, Subheading } from '@/components/heading'
 import { Select } from '@/components/select'
-import TeamGrid from './team-grid'
+import TeamGrid from '../../../../components/data-grids/team-grid'
 
 export default async function MyTeamsPage() {
   return (

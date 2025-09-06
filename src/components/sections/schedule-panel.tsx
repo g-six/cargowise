@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppContext } from '@/app/(app)/context-provider'
+import { useAppContext } from '@/app/context-provider'
 
 export default function SchedulePanel() {
 	const tomorrow = new Date()
