@@ -49,7 +49,7 @@ export function AddCoachForm(p: {
             if (searchRef.current) clearTimeout(searchRef.current)
         }
     }, [search])
-    console.log(JSON.stringify(ctx?.organization?.teams, null, 2));
+
     function submitForm() {
         setSubmitAction('Creating...')
         fetchData('/api/team/' + p['data-team'].slug + '/coach', { method: 'POST' }, payload).then(result => {
