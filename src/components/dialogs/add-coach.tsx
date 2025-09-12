@@ -71,7 +71,7 @@ export function AddCoachForm(p: {
     return (
         <>
             <div className='flex gap-2 flex-end w-full'>
-                <PeopleFinder people={p['data-people']} onSelect={person => {
+                <PeopleFinder people={p['data-people']} route='coaches' onSelect={person => {
                     setIsOpen(false)
                     fetchData('/api/team/' + p['data-team'].slug + '/coach/' + person.slug, { method: 'PUT' }, { role: 'N/A' }).then(record => {
                         if (!record) {

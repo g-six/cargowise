@@ -10,6 +10,7 @@
     "stripe-webhook": "stripe listen --forward-to localhost:3000/api/stripe-webhook"
   },
   "dependencies": {
+    "@cloudflare/stream-react": "^1.9.3",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
     "@supabase/ssr": "^0.7.0",

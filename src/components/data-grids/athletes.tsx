@@ -15,14 +15,13 @@ import Loader from "@/components/loader"
 import { useParams } from "next/navigation"
 import Card from "./card"
 
-export default function AthletesGrid(p: { 'data-teams'?: Record<string, any>[], 'data-athlete'?: Athlete }) {
+export default function AthletesGrid(p: { 'data-teams'?: Record<string, any>[] }) {
     const params = useParams()
     const ctx = useContext(Context)
     const setCtx = useContext(DispatchContext)
     const [loading, toggleLoading] = useState(false)
     const [team, setTeam] = useState<Team>(p["data-teams"]?.[0] as Team)
     const [athletes, setAthletes] = useState<(Athlete & { teams?: Team[] })[]>(params.slug ? team.athletes || [] : ctx?.athletes || [])
-    const [athlete, setAthlete] = useState<Athlete | undefined>(p["data-athlete"])
     const [data, setData] = useState<{
         my: {
             athletes: (TeamAthlete & { teams: Team[] })[]
@@ -109,7 +108,7 @@ export default function AthletesGrid(p: { 'data-teams'?: Record<string, any>[], 
                 {p['data-teams']?.length === 1 && <AddAthleteForm data-people={data?.athletes || []} data-team={p['data-teams'][0] as Team} onComplete={getData} />}
             </section>
             <section className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 w-full">
-                {athletes.map(a => <Card key={a.slug} title={a.last_name} contents={a.first_name} />)}
+                {athletes.map(a => <Card key={a.slug} title={a.last_name} contents={a.first_name} href={`/my/athlete/${a.slug}`} />)}
             </section>
     </>
 }

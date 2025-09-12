@@ -66,7 +66,7 @@ export function AddAthleteForm(p: {
 
     return (
         <>
-            <div className='gap-2 flex max-lg:flex-col max-lg:w-full'>
+            <div className='gap-2 flex max-sm:fixed max-sm:bottom-16 max-sm:z-10 justify-end'>
                 <PeopleFinder people={p['data-people']} onSelect={person => {
                     setIsOpen(false)
                     fetchData('/api/team/' + p['data-team'].slug + '/athlete/' + person.slug, { method: 'PUT' }, { role: 'N/A' }).then(record => {
@@ -78,7 +78,7 @@ export function AddAthleteForm(p: {
                         }
                     })
                 }} />
-                <Button type="button" className='max-lg:w-full' color={theme.brand as any} onClick={() => setIsOpen(true)}>
+                <Button type="button" className='' color={theme.brand as any} onClick={() => setIsOpen(true)}>
                     Add a new member
                 </Button>
             </div>

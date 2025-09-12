@@ -191,7 +191,7 @@ export function Calendar() {
 						))}
 					</div>
 					<div className="flex-1 my-2" />
-					<AddEventForm onComplete={console.log} />
+					{/* <AddEventForm onComplete={console.log} /> */}
 				</div>
 				<ScheduleList items={getScheduleForDate(selected)} />
 			</div>

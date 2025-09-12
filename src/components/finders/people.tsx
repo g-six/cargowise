@@ -17,11 +17,13 @@ import { fetchData } from '@/utils/api'
 export default function PeopleFinder({
 	people = [],
 	onSelect,
-    label = 'Add existing player'
+    label = 'Add existing player',
+    route = 'athletes'
 }: {
 	people: Record<string, any>[]
 	onSelect(person: Record<string, any>): void
     label?: string
+    route?: string
 }) {
 	const [query, setQuery] = useState('')
 	const [debouncedQuery, setDebouncedQuery] = useState(query)
@@ -44,7 +46,7 @@ export default function PeopleFinder({
 	useEffect(() => {
 		if (debouncedQuery) {
             toggleLoading(true);
-			fetchData(`/api/athletes?filters=name:${debouncedQuery}`)
+			fetchData(`/api/${route}?filters=name:${debouncedQuery}`)
 				.then((filteredResults) => {
                     setFilteredPeople(prev => ([
                         ...people.filter((person) => person.first_name.toLowerCase().includes(query.toLowerCase()) || person.last_name.toLowerCase().includes(query.toLowerCase())),
@@ -62,11 +64,16 @@ export default function PeopleFinder({
         if (person) onSelect(person)
     }
 
+
 	return (
 		<>
+        <button className='rounded-full w-12 h-12 bg-lime-500 text-bla'>
+
+        </button>
 			<Button type="button" color="lime" onClick={() => setOpen(true)}>
 				{label}
 			</Button>
+            
 			<Dialog
 				className="relative z-10"
 				open={open}

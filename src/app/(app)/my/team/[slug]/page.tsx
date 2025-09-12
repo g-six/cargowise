@@ -1,13 +1,11 @@
-import { Heading, Subheading } from "@/components/heading";
-import AthletesTable from "@/components/data-tables/athletes";
-import { addToTeam, getTeam } from "@/services/teams";
-import { AthleteForm } from "@/components/dialogs/view-athlete";
+import { Heading } from "@/components/heading";
+import { getTeam } from "@/services/teams";
 import { getAthlete } from "@/services/athletes";
-import { Team, TeamAthlete } from "@/data";
+import { Team } from "@/data";
 import { Text } from "@/components/text";
 import { AddCoachForm } from "@/components/dialogs/add-coach";
-import CoachesTable from "@/components/data-tables/coaches";
 import AthletesGrid from "@/components/data-grids/athletes";
+import CoachesGrid from "@/components/data-grids/coaches";
 
 export default async function TeamPage(p: { params: Promise<{ slug: string }>; searchParams: Promise<{ add: string }> }) {
     const { slug } = await p.params;
@@ -31,8 +29,8 @@ export default async function TeamPage(p: { params: Promise<{ slug: string }>; s
                 <AddCoachForm data-team={team as Team} data-people={[]} />
             </div>
         </section>
-        <CoachesTable data-team={team as Team} />
+        <CoachesGrid data-team={team as Team} />
         
-        <AthletesGrid data-teams={[team].filter(Boolean) as Record<string, any>[]} data-athlete={athlete} />
+        <AthletesGrid data-teams={[team].filter(Boolean) as Record<string, any>[]} />
     </>
 }

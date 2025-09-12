@@ -5,7 +5,11 @@ import Link from 'next/link';
 
 export default function Card({ title, contents, href }: { href?: string; title: string; contents: string; }) {
   return (
-    <div role='button' className='relative rounded-lg bg-black/20 p-4 hover:bg-black/40 transition hover:shadow shadow-zinc-400/10 cursor-pointer'>
+    <div role='button' className='relative rounded-lg bg-black/10 p-4 hover:bg-black/40 cursor-pointer' onClick={() => {
+        if (href) {
+          window.location.href = href;
+        }
+    }}>
       {
         href
           ? <Link href={href} className="hover:text-lime-500 flex text-lg/6 font-medium sm:text-sm/6 w-full justify-between"><span>{title}</span> <span>&rarr;</span></Link>
